@@ -1,7 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import Dashboard from './test/list';
-import Checkout from './routes/Checkout'
+import Checkout from './routes/createDocument/Checkout'
 
 function App() {
   return (
