@@ -10,14 +10,14 @@ export default function DocumentForm(document) {
     isIncome: true,
     isNewProductsOutcoming: true,
 
-    // docNumber: "",
+    docNumber: "",
     docDate: Date,
 
-    // numenculatureNumber: "",
-    // numenculatureName: "",
-    // partionNumber: 0,
-    // partionSeries: "",
-    // partionManufacturrer: "",
+    numenculatureNumber: "",
+    numenculatureName: "",
+    partionNumber: 0,
+    partionSeries: "",
+    partionManufacturrer: "",
     partionExpDate: "",
     partionIncomeDate: "",
   };
@@ -35,8 +35,8 @@ export default function DocumentForm(document) {
           <Grid item xs={6}>
             <TextField
               required
-              id="docId"
-              name="docId"
+              id="docNumber"
+              name="docNumber"
               label="Номер документа"
               fullWidth
               variant="standard"
@@ -74,8 +74,8 @@ export default function DocumentForm(document) {
         <Grid item xs={12}>
           <TextField
             required
-            id="numId"
-            name="numId"
+            id="numName"
+            name="numName"
             label="Название нуменкулатуры"
             fullWidth
             variant="standard"
@@ -85,8 +85,8 @@ export default function DocumentForm(document) {
         <Grid item xs={12}>
           <TextField
             required
-            id="consId"
-            name="consId"
+            id="partionName"
+            name="partionName"
             label="Номер партии"
             fullWidth
             variant="standard"
@@ -96,8 +96,8 @@ export default function DocumentForm(document) {
         <Grid item xs={12}>
           <TextField
             required
-            id="consId"
-            name="consId"
+            id="partionSeries"
+            name="partionSeries"
             label="Серия партии"
             fullWidth
             variant="standard"
@@ -107,8 +107,8 @@ export default function DocumentForm(document) {
         <Grid item xs={12}>
           <TextField
             required
-            id="consId"
-            name="consId"
+            id="partionManufacturrer"
+            name="partionManufacturrer"
             label="Производитель партии"
             fullWidth
             variant="standard"
@@ -122,8 +122,8 @@ export default function DocumentForm(document) {
             <Grid item xs={8}>
               <TextField
                 required
-                id="incomeDate"
-                name="incomeDate"
+                id="partionIncomeDate"
+                name="partionIncomeDate"
                 fullWidth
                 variant="standard"
                 type="date"
@@ -138,8 +138,8 @@ export default function DocumentForm(document) {
             <Grid item xs={8}>
               <TextField
                 required
-                id="expirationDate"
-                name="expirationDate"
+                id="partionExpDate"
+                name="partionExpDate"
                 fullWidth
                 variant="standard"
                 type="date"

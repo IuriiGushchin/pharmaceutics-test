@@ -22,7 +22,6 @@ function Copyright() {
   );
 }
 
-
 export default function Checkout() {
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -30,33 +29,16 @@ export default function Checkout() {
     setActiveStep(activeStep + 1);
   };
 
-
   return (
     <React.Fragment>
-      <CssBaseline />
-      <AppBar
-        position="absolute"
-        color="default"
-        elevation={0}
-        sx={{
-          position: "relative",
-          borderBottom: (t) => `1px solid ${t.palette.divider}`,
-        }}>
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Company name
-          </Typography>
-        </Toolbar>
-      </AppBar>
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper
           variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+          sx={{ my: { xs: 10, md: 10 }, p: { xs: 2, md: 10 } }}>
           <Typography component="h1" variant="h4" align="center">
             Создание номенкулатуры
           </Typography>
           <AddressForm />
-
           <Button
             variant="contained"
             onClick={handleNext}

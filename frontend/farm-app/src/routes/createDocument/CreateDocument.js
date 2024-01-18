@@ -72,25 +72,10 @@ export default function Checkout() {
 
   return (
     <React.Fragment>
-      <CssBaseline />
-      <AppBar
-        position="absolute"
-        color="default"
-        elevation={0}
-        sx={{
-          position: "relative",
-          borderBottom: (t) => `1px solid ${t.palette.divider}`,
-        }}>
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Company name
-          </Typography>
-        </Toolbar>
-      </AppBar>
       <Container component="main" maxWidth="xl">
         <Paper
           variant="outlined"
-          sx={{ my: { xs: 3, md: 10 }, p: { xs: 2, md: 10 } }}>
+          sx={{ my: { xs: 10, md: 10 }, p: { xs: 2, md: 10 } }}>
           <Typography component="h1" variant="h4" align="center">
             {`Документ`}
           </Typography>
