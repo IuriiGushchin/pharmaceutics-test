@@ -6,7 +6,6 @@ import NomenculaturesList from "./routes/nomenculaturesList/nomenculaturesList";
 import CreateDocument from "./routes/createDocument/CreateDocument";
 import CreateNomenculature from "./routes/createNomenculature/CreateNomenculature";
 import EditNomenculature from "./routes/editNomenculature/EditNumenculature";
-import Dashboard from "./helpers/testtest/Dashboard";
 import Header from "./helpers/AppHeader";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -47,7 +46,6 @@ function App() {
                 path={ROUTES_LIST.editNomenculature}
                 Component={EditNomenculature}
               />
-              <Route exact path={ROUTES_LIST.test} Component={Dashboard} />
             </Routes>
           </Box>
         </Box>
