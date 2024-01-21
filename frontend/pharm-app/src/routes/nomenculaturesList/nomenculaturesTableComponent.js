@@ -5,7 +5,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Title from './Title';
 
 // Generate Order Data
 function createData(id, date, name, shipTo, paymentMethod, amount) {
@@ -52,27 +51,28 @@ function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function Orders() {
+export default function NomenculaturesTableComponent( nomenculatures ) {
+  console.log(nomenculatures)
   return (
     <React.Fragment>
       {/* <Title>Recent Orders</Title> */}
       <Table size="medium">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
+            <TableCell>ID</TableCell>
+            <TableCell>Код</TableCell>
+            <TableCell>Название</TableCell>
+            <TableCell>ID прихода</TableCell>
             <TableCell align="right">Sale Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
+          {nomenculatures.nomenculatures && nomenculatures.nomenculatures.map((row) => (
+            <TableRow key={row.nomenculatureId}>
+              <TableCell>{row.nomenculatureId}</TableCell>
+              <TableCell>{row.nomenculatureCode}</TableCell>
+              <TableCell>{row.nomenculatureName}</TableCell>
+              <TableCell>{row.consignmentId}</TableCell>
               <TableCell align="right">{`$${row.amount}`}</TableCell>
             </TableRow>
           ))}

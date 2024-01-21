@@ -1,4 +1,5 @@
-import db from "../db/index.js"
+
+const db = require("./index.js")
 
 const create = async ({
     title,
@@ -30,10 +31,11 @@ const findOne = async (id) => {
     return result.rows[0];
 }
 
-const findAll = async () => {
+const getAll = async () => {
+
     const query = `
         SELECT * FROM
-            todos
+            "public"."nomenculaturesTable"
     ;`;
 
     const result = await db.query(query);
@@ -72,10 +74,10 @@ const deleteOne = async (id) => {
     return result.rows[0];
 }
 
-export default {
+ module.exports = {
     create,
     findOne,
-    findAll,
+    getAll,
     updateOne,
     deleteOne,
 }

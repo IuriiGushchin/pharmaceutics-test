@@ -4,6 +4,6 @@
       "user": "postgres",
       "password": "9999",
       "host": "localhost",
-      "database": "postgres"
+      "database": "pharmaceuticals"
     }
   }

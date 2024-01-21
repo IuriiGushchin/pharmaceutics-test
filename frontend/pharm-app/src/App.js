@@ -30,7 +30,7 @@ function App() {
               overflow: "auto",
             }}>
             <Routes>
-              <Route exact path="/" Component={NomenculaturesList} />
+              <Route exact path="/nomenculatures" Component={NomenculaturesList} />
               <Route
                 exact
                 path={ROUTES_LIST.createDocument}

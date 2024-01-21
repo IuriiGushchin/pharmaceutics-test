@@ -1,14 +1,18 @@
-import express from 'express';
+const express = require('express');
 const app = express();
-import route from './server-settings/routes/route.js'
+const documentsRouter = require('./routes/documentsRoute.js')
+const nomenculaturesRouter = require('./routes/nomenculaturesRouter.js')
 
+const cors = require('cors');
+app.use(cors());
 
 app.use(express.json());
-app.use('/route', route);
+
+app.use('/documents', documentsRouter);
+app.use('/nomenculatures', nomenculaturesRouter);
 
 app.get('/', (req, res) => {
-    res.send('hello from express server');
-  });
+  res.send('hello from express server');
+});
 
-export default app;
-
+module.exports = app

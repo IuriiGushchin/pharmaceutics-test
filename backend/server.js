@@ -1,9 +1,10 @@
-import app from "./app.js"
+const app = require("./app.js");
+require('dotenv').config()
 
 async function start() {
-    const port = 3000
+    
 
-    app.listen(port, () => {
+    app.listen(process.env.PORT, () => {
         console.log("run")
     })
 }
