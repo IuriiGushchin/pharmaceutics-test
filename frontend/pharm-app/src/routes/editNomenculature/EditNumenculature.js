@@ -1,36 +1,26 @@
 import * as React from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
-import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import AddressForm from "./nomenculatureForm";
-import { v4 as uuidv4 } from "uuid";
+import EditNumenculatureForm from "./EditNumenculatureForm";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import axios from 'axios';
+import { SEVER_REQUESTS, PORT } from '../../helpers/constants';
 
-export default function Checkout() {
-  const id = uuidv4();
-  const [activeStep, setActiveStep] = React.useState(0);
 
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
-  };
+export default function EditNomenculature() {
+  const [nomenculature, setNomenculature] = React.useState("")
 
+  const queryParameters = new URLSearchParams(window.location.search)
+  const nomenculatureId = queryParameters.get("nomenculatureId")
+
+  React.useEffect(() => {
+    axios.get(`http://localhost:${PORT}${SEVER_REQUESTS}/${nomenculatureId}`).then((response) => {
+      setNomenculature(response.data);
+    });
+  }, [nomenculatureId]);
+
+  
   return (
     <React.Fragment>
       <Container component="main" maxWidth="100%" sx={{ mb: 10 }}>
@@ -38,18 +28,10 @@ export default function Checkout() {
           variant="outlined"
           sx={{ my: { xs: 10, md: 10 }, p: { xs: 2, md: 10 } }}>
           <Typography component="h1" variant="h4" align="center" sx={{ mb: 4 }}>
-            {`Правка номенкулатуры ${id}`}
+            {`Правка ${nomenculature.nomenculatureName}`}
           </Typography>
-          <AddressForm id={id} />
-
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            sx={{ mt: 3, ml: 1 }}>
-            Next
-          </Button>
+          <EditNumenculatureForm nomenculature={nomenculature} />
         </Paper>
-        <Copyright />
       </Container>
     </React.Fragment>
   );

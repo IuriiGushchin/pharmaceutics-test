@@ -4,30 +4,24 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import PostAddIcon from '@mui/icons-material/PostAdd';
-import DifferenceIcon from '@mui/icons-material/Difference';
 import TableViewIcon from '@mui/icons-material/TableView';
+import { ROUTES_LIST } from '../helpers/constants';
 
 export const mainListItems = (
   <React.Fragment>
-    <ListItemButton href='/create-document' >
+    <ListItemButton href={ROUTES_LIST.createDocument} >
       <ListItemIcon>
         <NoteAddIcon />
       </ListItemIcon>
       <ListItemText primary="Новый документ" />
     </ListItemButton>
-    <ListItemButton href='/create-nomenculature'>
+    <ListItemButton href={ROUTES_LIST.createNomenculature}>
       <ListItemIcon>
         <PostAddIcon />
       </ListItemIcon>
       <ListItemText primary="Новая номенкулатура" />
     </ListItemButton>
-    <ListItemButton href='/edit-nomenculature' >
-      <ListItemIcon>
-        <DifferenceIcon />
-      </ListItemIcon>
-      <ListItemText primary="Правка номенкулатуры" />
-    </ListItemButton>
-    <ListItemButton href='/'>
+    <ListItemButton href={ROUTES_LIST.getNomenculatures}>
       <ListItemIcon>
         <TableViewIcon />
       </ListItemIcon>

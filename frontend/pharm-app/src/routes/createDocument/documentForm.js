@@ -43,7 +43,7 @@ export default function DocumentForm(document) {
             />
           </Grid>
 
-          <Grid item container xs={6} alignItems={"flex-end"}>
+          <Grid item container xs={12} lg={6} alignItems={"flex-end"}>
             <Grid item xs={4} >
               <Typography >Дата документа:</Typography>
             </Grid>

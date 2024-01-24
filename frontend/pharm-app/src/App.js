@@ -2,13 +2,29 @@ import "./App.css";
 import * as React from "react";
 import { Routes, Route } from "react-router-dom";
 import { ROUTES_LIST } from "./helpers/constants";
-import NomenculaturesList from "./routes/nomenculaturesList/nomenculaturesList";
+import NomenculaturesList from "./routes/nomenculaturesList/NomenculaturesList";
 import CreateDocument from "./routes/createDocument/CreateDocument";
 import CreateNomenculature from "./routes/createNomenculature/CreateNomenculature";
 import EditNomenculature from "./routes/editNomenculature/EditNumenculature";
-import Header from "./helpers/AppHeader";
+import Header from "./globalElements/AppHeader";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import { Typography } from "@mui/material";
+import { Link } from "@mui/material";
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center">
+      {"Copyright © "}
+      <Link color="inherit" href="https://mui.com/">
+        Your Website
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
+
 
 const defaultTheme = createTheme();
 
@@ -30,17 +46,24 @@ function App() {
               overflow: "auto",
             }}>
             <Routes>
-              <Route exact path="/nomenculatures" Component={NomenculaturesList} />
+              <Route 
+              exact
+              path={ROUTES_LIST.getNomenculatures} 
+              Component={NomenculaturesList} 
+              />
+
               <Route
                 exact
                 path={ROUTES_LIST.createDocument}
                 Component={CreateDocument}
               />
+
               <Route
                 exact
                 path={ROUTES_LIST.createNomenculature}
                 Component={CreateNomenculature}
               />
+              
               <Route
                 exact
                 path={ROUTES_LIST.editNomenculature}
@@ -49,6 +72,7 @@ function App() {
             </Routes>
           </Box>
         </Box>
+        <Copyright />
       </ThemeProvider>
     </div>
   );

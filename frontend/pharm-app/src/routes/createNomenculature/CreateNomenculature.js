@@ -1,13 +1,9 @@
 import * as React from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
-import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import AddressForm from "./nomenculatureForm";
+import CreateNomenculatureForm from "./CreateNomenculatureForm";
 
 function Copyright() {
   return (
@@ -22,7 +18,7 @@ function Copyright() {
   );
 }
 
-export default function Checkout() {
+export default function CreateNomenculature() {
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = () => {
@@ -31,20 +27,14 @@ export default function Checkout() {
 
   return (
     <React.Fragment>
-      <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+      <Container component="main">
         <Paper
           variant="outlined"
           sx={{ my: { xs: 10, md: 10 }, p: { xs: 2, md: 10 } }}>
           <Typography component="h1" variant="h4" align="center">
             Создание номенкулатуры
           </Typography>
-          <AddressForm />
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            sx={{ mt: 3, ml: 1 }}>
-            Next
-          </Button>
+          <CreateNomenculatureForm />
         </Paper>
         <Copyright />
       </Container>
