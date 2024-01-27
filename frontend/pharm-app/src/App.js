@@ -9,21 +9,8 @@ import EditNomenculature from "./routes/editNomenculature/EditNumenculature";
 import Header from "./globalElements/AppHeader";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
-import { Link } from "@mui/material";
+import Copyright from "./globalElements/Copyrights"
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 
 const defaultTheme = createTheme();

@@ -12,4 +12,5 @@ export const ROUTES_LIST = {
 //todo : edit to correct names
   export const SEVER_REQUESTS = {
     nomenculatures: "/nomenculatures",
+    createNomenculature: "/nomenculatures/create"
   }

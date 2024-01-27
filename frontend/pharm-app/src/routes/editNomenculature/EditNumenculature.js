@@ -8,6 +8,8 @@ import axios from 'axios';
 import { SEVER_REQUESTS, PORT } from '../../helpers/constants';
 
 
+
+//TODO: обновить значения на странице после изменений в номенкулатуре
 export default function EditNomenculature() {
   const [nomenculature, setNomenculature] = React.useState("")
 
@@ -15,7 +17,7 @@ export default function EditNomenculature() {
   const nomenculatureId = queryParameters.get("nomenculatureId")
 
   React.useEffect(() => {
-    axios.get(`http://localhost:${PORT}${SEVER_REQUESTS}/${nomenculatureId}`).then((response) => {
+    axios.get(`http://localhost:${PORT}${SEVER_REQUESTS.nomenculatures}/${nomenculatureId}`).then((response) => {
       setNomenculature(response.data);
     });
   }, [nomenculatureId]);
