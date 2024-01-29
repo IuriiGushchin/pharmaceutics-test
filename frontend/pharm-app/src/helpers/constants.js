@@ -6,11 +6,13 @@ export const ROUTES_LIST = {
     createDocument: "/create-document",
     createNomenculature: "/create-nomenculature",
     editNomenculature: "/edit-nomenculature",
-    getNomenculatures: "/get-nomenculatures"
+    getNomenculatures: "/get-nomenculatures",
+    report: "/report"
   };
 
 //todo : edit to correct names
   export const SEVER_REQUESTS = {
     nomenculatures: "/nomenculatures",
-    createNomenculature: "/nomenculatures/create"
+    createNomenculature: "/nomenculatures/create",
+    createDocument: "/documents"
   }

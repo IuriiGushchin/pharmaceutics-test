@@ -5,6 +5,7 @@ import ListItemText from '@mui/material/ListItemText';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import TableViewIcon from '@mui/icons-material/TableView';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import { ROUTES_LIST } from '../helpers/constants';
 
 export const mainListItems = (
@@ -26,6 +27,12 @@ export const mainListItems = (
         <TableViewIcon />
       </ListItemIcon>
       <ListItemText primary="Номенкулатуры" />
+    </ListItemButton>
+    <ListItemButton href={ROUTES_LIST.report}>
+      <ListItemIcon>
+        <AssessmentIcon />
+      </ListItemIcon>
+      <ListItemText primary="Отчет" />
     </ListItemButton>
   </React.Fragment>
 );

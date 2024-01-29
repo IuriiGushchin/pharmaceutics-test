@@ -57,8 +57,7 @@ export default function EditNomenculatureForm(props) {
         nomenculature
       )
       .then((response) => {
-        console.log(response);
-        // this.setState({ articleId: response.data.id })
+        if(!alert('Succied!')){window.location.reload();}
       });
 
     console.log(nomenculature);

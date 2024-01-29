@@ -1,8 +1,8 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+// import AddIcon from "@mui/icons-material/Add";
+// import RemoveIcon from "@mui/icons-material/Remove";
 import { v4 as uuidv4 } from "uuid";
 import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -11,9 +11,9 @@ import axios from "axios";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateField } from "@mui/x-date-pickers/DateField";
-import { makeStyles } from "@mui/styles";
+import * as yup from "yup";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import useLabelState from "../../helpers/useLabelState";
 
 const initialNomenculature = {
   nomenculatureCode: "",
@@ -27,35 +27,39 @@ const initialNomenculature = {
   count: 0,
 };
 
-const useStyles = makeStyles({
-  root: {
-    "& .MuiInputBase-root": {
-      padding: 0,
-      paddingLeft: 15,
-      marginLeft: 15,
-      "& .MuiButtonBase-root": {
-        padding: 1,
-        paddingLeft: 10,
-        marginLeft: 15,
-      },
-      "& .MuiInputBase-input": {
-        padding: 15,
-        paddingLeft: 5,
-        marginLeft: 15,
-      },
-    },
-  },
-});
-
-//todo: 2 и более заказов , где взять mmake styles ?
-
+//todo: 2 и более заказов - ?
 export default function CreateNomenculatureForm() {
-  const [consCount, setConsCount] = React.useState(0);
-  const [consIds, setConsIds] = React.useState([]);
   const [nomenculature, setNomenculature] =
     React.useState(initialNomenculature);
 
-  const classes = useStyles();
+  const [errors, setErrors] = React.useState(null);
+  const [schema] = useLabelState(
+    yup.object().shape({
+      nomenculatureCode: yup.string().required("* Обязательно"),
+      nomenculatureName: yup.string().required("* Обязательно"),
+      consignmentNumber: yup
+        .number()
+        .required()
+        .positive("Должно быть положительным")
+        .integer(),
+      series: yup.string().required("* Обязательно"),
+      manufacturer: yup.string().required("* Обязательно"),
+      bestBeforeDate: yup
+        .date()
+        .required("* Обязательно")
+        .typeError("Некорректная дата"),
+      receiptDate: yup
+        .date()
+        .required("* Обязательно")
+        .typeError("Некорректная дата"),
+      count: yup
+        .number()
+        .required()
+        .positive("Должно быть положительным")
+        .integer(),
+    }),
+    "schema"
+  );
 
   React.useEffect(() => {
     const nomenculatureId = uuidv4();
@@ -65,8 +69,12 @@ export default function CreateNomenculatureForm() {
       nomenculatureId: nomenculatureId,
       consignmentId: consignmentId,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // const [consignment, setConsignment] = React.useState(initialConsignment);
+
+  // Для возможного варианта создания нескольких партий одновременно
+  // const [consCount, setConsCount] = React.useState(0);
+  // const [consIds, setConsIds] = React.useState([]);
 
   // const handleNext = () => {
   //   const tempIds = consIds;
@@ -83,24 +91,45 @@ export default function CreateNomenculatureForm() {
   //   setConsCount(consCount - 1);
   // };
 
-  const handleCreate = () => {
-    console.log(nomenculature);
+  const handleCreate = async () => {
+    try {
+      await schema.validateSync(nomenculature, { abortEarly: false });
+    } catch (error) {
+      console.log(error.inner);
+      const errorMap = {};
+      if (!error.inner) {
+        throw error;
+      }
+      error.inner.forEach((e) => {
+        console.log(e);
+        errorMap[e.path] = e.message;
+      });
+      setErrors(errorMap);
+      console.error(errorMap, "errors");
+      return;
+    }
     axios
       .post(
         `http://localhost:${PORT}${SEVER_REQUESTS.createNomenculature}/`,
         nomenculature
       )
       .then((response) => {
-        // this.setState({ articleId: response.data.id })
+        if (!alert("Succied!")) {
+          window.location.reload();
+        }
       });
   };
 
   return (
     <React.Fragment>
-      <Grid container spacing={3} justifyContent={"center"} xs={12}>
+      <Grid container spacing={3} justifyContent={"center"}>
         <Grid item xs={12}>
           <TextField
-            required
+            // error={"fdsafsad"}
+            error={errors && errors["nomenculatureCode"]}
+            helperText={errors && errors["nomenculatureCode"]}
+            // helperText={"Обязательно"}
+            // required
             id="nomId"
             name="nomId"
             label="Код нуменкулатуры"
@@ -117,6 +146,8 @@ export default function CreateNomenculatureForm() {
         </Grid>
         <Grid item xs={12}>
           <TextField
+            error={errors && errors["nomenculatureName"]}
+            helperText={errors && errors["nomenculatureName"]}
             required
             id="nomName"
             name="nomName"
@@ -148,6 +179,8 @@ export default function CreateNomenculatureForm() {
           <Typography>Партия</Typography>
           <Grid item xs={12} sx={{ mt: -3 }}>
             <TextField
+              error={errors && errors["consignmentNumber"]}
+              helperText={errors && errors["consignmentNumber"]}
               required
               id="consId"
               name="consId"
@@ -166,6 +199,8 @@ export default function CreateNomenculatureForm() {
           </Grid>
           <Grid item xs={12}>
             <TextField
+              error={errors && errors["series"]}
+              helperText={errors && errors["series"]}
               required
               id="series"
               name="series"
@@ -184,6 +219,8 @@ export default function CreateNomenculatureForm() {
           </Grid>
           <Grid item xs={12}>
             <TextField
+              error={errors && errors["manufacturer"]}
+              helperText={errors && errors["manufacturer"]}
               required
               id="manufacturer"
               name="manufacturer"
@@ -200,28 +237,28 @@ export default function CreateNomenculatureForm() {
               }
             />
           </Grid>
-          <Grid
-            item
-            container
-            xs={12}
-            style={{
-              display: "flex",
-              alignItems: "stretch",
-              justifyContent: "space-between",
-            }}>
+          <Grid item container xs={12}>
             <Grid item xs={6}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["DateField"]} sx={{ ml: "5%" }}>
                   <DatePicker
                     label="Срок годности"
-                    slotProps={{ textField: { variant: "standard" } }}
-                    sx={{ width: "95%" }}
+                    render
+                    slotProps={{
+                      textField: {
+                        variant: "standard",
+                        error: !!errors && !!errors["bestBeforeDate"],
+                        helperText: errors && errors["bestBeforeDate"],
+                      },
+
+                      // helperText={errors && errors["manufacturer"]}
+                    }}
+                    sx={{ width: "95%", overflow: 'hidden'  }}
                     onChange={(value) => {
-                      console.log(value);
                       setNomenculature({
                         ...nomenculature,
                         bestBeforeDate: value,
-                      })
+                      });
                     }}
                   />
                 </DemoContainer>
@@ -229,19 +266,24 @@ export default function CreateNomenculatureForm() {
             </Grid>
             <Grid item xs={6}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={["DateField"]} >
+                <DemoContainer components={["DateField"]}>
                   <DatePicker
                     label="Дата прихода"
-                    slotProps={{ textField: { variant: "standard" } }}
-                    sx={{ width: "95%" }}
+                    slotProps={{
+                      textField: {
+                        variant: "standard",
+                        error: !!errors && !!errors["receiptDate"],
+                        helperText: errors && errors["receiptDate"],
+                      },
+                    }}
+                    sx={{ width: "95%", overflow: 'hidden'  }}
                     onChange={(value) => {
                       console.log(value);
                       setNomenculature({
                         ...nomenculature,
                         receiptDate: value,
-                      })
+                      });
                     }}
-                    
                   />
                 </DemoContainer>
               </LocalizationProvider>
@@ -249,6 +291,8 @@ export default function CreateNomenculatureForm() {
           </Grid>
           <Grid item xs={12}>
             <TextField
+              error={errors && errors["count"]}
+              helperText={errors && errors["count"]}
               required
               id="count"
               name="count"
@@ -260,7 +304,7 @@ export default function CreateNomenculatureForm() {
               onChange={(event) =>
                 setNomenculature({
                   ...nomenculature,
-                  count: event.target.value,
+                  count: Number(event.target.value),
                 })
               }
             />

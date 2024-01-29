@@ -3,7 +3,7 @@ import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import EditNumenculatureForm from "./EditNumenculatureForm";
-
+import Copyright from "../../globalElements/Copyrights";
 import axios from 'axios';
 import { SEVER_REQUESTS, PORT } from '../../helpers/constants';
 
@@ -34,6 +34,7 @@ export default function EditNomenculature() {
           </Typography>
           <EditNumenculatureForm nomenculature={nomenculature} />
         </Paper>
+        <Copyright/>
       </Container>
     </React.Fragment>
   );

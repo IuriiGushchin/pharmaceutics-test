@@ -1,0 +1,414 @@
+import * as React from "react";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import { v4 as uuidv4 } from "uuid";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import { SEVER_REQUESTS, PORT } from "../../helpers/constants";
+import axios from "axios";
+import * as yup from "yup";
+
+import useLabelState from "../../helpers/useLabelState";
+
+
+const initialDocument = {
+  documentId: "",
+  isIncome: true,
+  isNewProductsOutcoming: true,
+  documentNumber: "",
+  documentDate: "",
+  nomenculatureId: "",
+};
+const initialNomenculature = {
+  nomenculatureCode: "",
+  nomenculatureName: "",
+  consignmentId: "",
+  consignmentNumber: 0,
+  series: "",
+  manufacturer: "",
+  bestBeforeDate: "",
+  receiptDate: "",
+  count: 0,
+};
+
+export default function DocumentForm() {
+  const [document, setDocument] = React.useState(initialDocument);
+  const [nomenculature, setNomenculature] =
+    React.useState(initialNomenculature);
+  const [isDocTypeIncome, setIsDoctypeIncome] = React.useState(true);
+  const [isNewProductsOutcoming, setIsNewProductsOutcoming] =
+    React.useState(true);
+
+  React.useEffect(() => {
+    const documentId = uuidv4();
+    const nomenculatureId = uuidv4();
+    const consignmentId = uuidv4();
+    setDocument({
+      ...document,
+      documentId: documentId,
+      nomenculatureId: nomenculatureId,
+    });
+
+    setNomenculature({
+      ...nomenculature,
+      nomenculatureId: nomenculatureId,
+      consignmentId: consignmentId,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleDocTypeChange = (event) => {
+    setDocument({ ...document, isIncome: event.target.value });
+    setIsDoctypeIncome(event.target.value);
+  };
+
+  const handleProductOutcomeType = (event) => {
+    setDocument({ ...document, isNewProductsOutcoming: event.target.value });
+    setIsNewProductsOutcoming(event.target.value);
+  };
+
+  const [errors, setErrors] = React.useState(null);
+  const [nomenculatureSchema] = useLabelState(
+    yup.object().shape({
+      nomenculatureCode: yup.string().required("* Обязательно"),
+      nomenculatureName: yup.string().required("* Обязательно"),
+      consignmentId: yup.string().required("* Обязательно"),
+      consignmentNumber: yup
+        .number()
+        .required()
+        .positive("Должно быть положительным")
+        .integer(),
+      series: yup.string().required("* Обязательно"),
+      manufacturer: yup.string().required("* Обязательно"),
+      bestBeforeDate: yup
+        .date()
+        .required("* Обязательно")
+        .typeError("Некорректная дата"),
+      receiptDate: yup
+        .date()
+        .required("* Обязательно")
+        .typeError("Некорректная дата"),
+      count: yup
+        .number()
+        .required()
+        .positive("Должно быть положительным")
+        .integer(),
+    }),
+    "nomSchema"
+  );
+  const [documentSchema] = useLabelState(
+    yup.object().shape({
+      documentNumber: yup
+        .number()
+        .required()
+        .positive("Должно быть положительным")
+        .integer(),
+      documentDate: yup
+        .date()
+        .required("* Обязательно")
+        .typeError("Некорректная дата"),
+    }),
+    "docSchema"
+  );
+
+  const validation = async (schema, obj) => {
+    try {
+      await schema.validateSync(obj, { abortEarly: false });
+    } catch (error) {
+      console.log(error.inner);
+      const errorMap = {};
+      if (!error.inner) {
+        throw error;
+      }
+      error.inner.forEach((e) => {
+        console.log(e);
+        errorMap[e.path] = e.message;
+      });
+      // setErrors(errorMap);
+      console.error(errorMap, "errors");
+      return errorMap;
+    }
+  }
+
+  const handleCreate = async () => {
+    
+    const docErrors = await validation(documentSchema, document)
+    console.error(docErrors, "docErrors");
+    const nomErrors = await validation(nomenculatureSchema, nomenculature)
+    console.error(nomErrors, "nomErrors");
+
+    if (docErrors || nomErrors) {
+      setErrors({...docErrors, ...nomErrors})
+      return
+    }
+
+    console.log(nomenculature);
+    console.log(document);
+    axios
+      .post(
+        `http://localhost:${PORT}${SEVER_REQUESTS.createDocument}/`,
+        {...document, ...nomenculature}
+      )
+      .then(() => {
+        if(!alert('Succied!')){window.location.reload();}
+      });
+  };
+
+  return (
+    <React.Fragment>
+      <Grid container spacing={3} sx={{ mt: 4 }}>
+        <Grid item xs={6} sm={6} mb={4}>
+          <FormControl variant="standard" fullWidth>
+            <InputLabel>Тип документа</InputLabel>
+            <Select
+              sx={{ textAlign: "left" }}
+              value={isDocTypeIncome}
+              onChange={handleDocTypeChange}
+              label="Тип документа">
+              <MenuItem value={true}>Поступление</MenuItem>
+              <MenuItem value={false}>Реализация</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        {!isDocTypeIncome && (
+          <Grid item xs={6} sm={6} mb={4}>
+            <FormControl variant="standard" fullWidth>
+              <InputLabel>Тип отгрузки</InputLabel>
+              <Select
+                sx={{ textAlign: "left" }}
+                value={isNewProductsOutcoming}
+                onChange={handleProductOutcomeType}
+                label="Вид отгрузки">
+                <MenuItem value={true}>Старый товар</MenuItem>
+                <MenuItem value={false}>Новый товар</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        )}
+      </Grid>
+      <Grid container spacing={3}>
+        <Grid item container spacing={3} xs={12}>
+          <Grid item xs={6}>
+            <TextField
+              required
+              id="documentNumber"
+              name="documentNumber"
+              label="Номер документа"
+              error={errors && errors["documentNumber"]}
+              helperText={errors && errors["documentNumber"]}
+              fullWidth
+              variant="standard"
+              onChange={(event) =>
+                setDocument({
+                  ...document,
+                  documentNumber: event.target.value,
+                })
+              }
+            />
+          </Grid>
+
+          <Grid item xs={6}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateField"]} sx={{ pt: 0 }}>
+                <DatePicker
+                  name="documentDate"
+                  label="Дата документа"
+                  render
+                  slotProps={{
+                    textField: {
+                      variant: "standard",
+                      error: !!errors && !!errors["receiptDate"],
+                      helperText: errors && errors["receiptDate"],
+                    },
+                  }}
+                  sx={{ width: "100%", overflow: 'hidden' }}
+                  onChange={(value) =>
+                    setDocument({
+                      ...document,
+                      documentDate: value,
+                    })
+                  }
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+          </Grid>
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            required
+            error={errors && errors["nomenculatureCode"]}
+            helperText={errors && errors["nomenculatureCode"]}
+            id="nomenculatureCode"
+            name="nomenculatureCode"
+            label="Номер нуменкулатуры"
+            fullWidth
+            variant="standard"
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                nomenculatureCode: event.target.value,
+              })
+            }
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            required
+            error={errors && errors["nomenculatureName"]}
+            helperText={errors && errors["nomenculatureName"]}
+            id="nomenculatureName"
+            name="nomenculatureName"
+            label="Название нуменкулатуры"
+            fullWidth
+            variant="standard"
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                nomenculatureName: event.target.value,
+              })
+            }
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            required
+            error={errors && errors["consignmentNumber"]}
+            helperText={errors && errors["consignmentNumber"]}
+            id="consignmentNumber"
+            name="consignmentNumber"
+            label="Код партии"
+            fullWidth
+            variant="standard"
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                consignmentNumber: event.target.value,
+              })
+            }
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            required
+            error={errors && errors["series"]}
+            helperText={errors && errors["series"]}
+            id="series"
+            name="series"
+            label="Серия партии"
+            fullWidth
+            variant="standard"
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                series: event.target.value,
+              })
+            }
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            required
+            error={errors && errors["manufacturer"]}
+            helperText={errors && errors["manufacturer"]}
+            id="manufacturer"
+            name="manufacturer"
+            label="Производитель партии"
+            fullWidth
+            variant="standard"
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                manufacturer: event.target.value,
+              })
+            }
+          />
+        </Grid>
+
+        <Grid item xs={6} alignItems={"flex-end"}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DateField"]}>
+              <DatePicker
+                name="bestBeforeDate"
+                label="Срок годности"
+                render
+                slotProps={{
+                  textField: {
+                    variant: "standard",
+                    error: !!errors && !!errors["bestBeforeDate"],
+                    helperText: errors && errors["bestBeforeDate"],
+                  },
+                }}
+                sx={{ width: "100%", overflow: 'hidden'  }}
+                onChange={(value) => {
+                  setNomenculature({
+                    ...nomenculature,
+                    bestBeforeDate: value,
+                  });
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </Grid>
+
+        <Grid item xs={6} alignItems={"flex-end"}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DateField"]}>
+              <DatePicker
+                name="receiptDate"
+                label="Дата прихода"
+                render
+                slotProps={{
+                  textField: {
+                    variant: "standard",
+                    error: !!errors && !!errors["receiptDate"],
+                    helperText: errors && errors["receiptDate"],
+                  },
+                }}
+                sx={{ width: "100%", overflow: 'hidden' }}
+                onChange={(value) => {
+                  setNomenculature({
+                    ...nomenculature,
+                    receiptDate: value,
+                  });
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            error={errors && errors["count"]}
+            helperText={errors && errors["count"]}
+            id="count"
+            name="count"
+            label="Количество товара"
+            fullWidth
+            variant="standard"
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                count: event.target.value,
+              })
+            }
+          />
+        </Grid>
+      </Grid>
+      <Button variant="contained" onClick={handleCreate} sx={{ mt: 3, ml: 1 }}>
+        Next
+      </Button>
+    </React.Fragment>
+  );
+}
