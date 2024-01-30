@@ -6,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import { v4 as uuidv4 } from "uuid";
 import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
-import { SEVER_REQUESTS, PORT } from "../../helpers/constants";
+import { SERVER_REQUESTS, PORT } from "../../helpers/constants";
 import axios from "axios";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -110,7 +110,7 @@ export default function CreateNomenculatureForm() {
     }
     axios
       .post(
-        `http://localhost:${PORT}${SEVER_REQUESTS.createNomenculature}/`,
+        `http://localhost:${PORT}${SERVER_REQUESTS.createNomenculature}/`,
         nomenculature
       )
       .then((response) => {
@@ -132,7 +132,7 @@ export default function CreateNomenculatureForm() {
             // required
             id="nomId"
             name="nomId"
-            label="Код нуменкулатуры"
+            label="Код номенкулатуры"
             fullWidth
             autoComplete="given-name"
             variant="standard"

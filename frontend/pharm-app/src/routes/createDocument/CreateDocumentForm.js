@@ -11,12 +11,11 @@ import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-import { SEVER_REQUESTS, PORT } from "../../helpers/constants";
+import { SERVER_REQUESTS, PORT } from "../../helpers/constants";
 import axios from "axios";
 import * as yup from "yup";
 
 import useLabelState from "../../helpers/useLabelState";
-
 
 const initialDocument = {
   documentId: "",
@@ -66,6 +65,7 @@ export default function DocumentForm() {
 
   const handleDocTypeChange = (event) => {
     setDocument({ ...document, isIncome: event.target.value });
+    setNomenculature({ ...nomenculature, isIncome: event.target.value });
     setIsDoctypeIncome(event.target.value);
   };
 
@@ -77,6 +77,7 @@ export default function DocumentForm() {
   const [errors, setErrors] = React.useState(null);
   const [nomenculatureSchema] = useLabelState(
     yup.object().shape({
+      isIncome: yup.bool(),
       nomenculatureCode: yup.string().required("* Обязательно"),
       nomenculatureName: yup.string().required("* Обязательно"),
       consignmentId: yup.string().required("* Обязательно"),
@@ -87,10 +88,18 @@ export default function DocumentForm() {
         .integer(),
       series: yup.string().required("* Обязательно"),
       manufacturer: yup.string().required("* Обязательно"),
-      bestBeforeDate: yup
-        .date()
-        .required("* Обязательно")
-        .typeError("Некорректная дата"),
+      bestBeforeDate: yup.date().when("isIncome", (isIncome, schema) => {
+        if (isIncome === true) {
+          return schema
+            .required("* Обязательно")
+            .typeError("Некорректная дата");
+        }
+        return schema;
+      }),
+      // .when("isIncome", {
+      //   is: true,
+      //   then: yup.date().required("* Обязательно").typeError("Некорректная дата")
+      // }),
       receiptDate: yup
         .date()
         .required("* Обязательно")
@@ -135,29 +144,36 @@ export default function DocumentForm() {
       console.error(errorMap, "errors");
       return errorMap;
     }
-  }
+  };
 
   const handleCreate = async () => {
-    
-    const docErrors = await validation(documentSchema, document)
+    console.log(nomenculature.isIncome);
+    const docErrors = await validation(documentSchema, document);
     console.error(docErrors, "docErrors");
-    const nomErrors = await validation(nomenculatureSchema, nomenculature)
+    const nomErrors = await validation(nomenculatureSchema, nomenculature);
     console.error(nomErrors, "nomErrors");
 
     if (docErrors || nomErrors) {
-      setErrors({...docErrors, ...nomErrors})
-      return
-    }
+      var keys = Object.keys({ ...docErrors, ...nomErrors });
+      var key = keys[0];
 
+      if (keys.length === 1 && key === "bestBeforeDate" && !isDocTypeIncome) {
+      } else {
+        setErrors({ ...docErrors, ...nomErrors });
+        return;
+      }
+    }
     console.log(nomenculature);
     console.log(document);
     axios
-      .post(
-        `http://localhost:${PORT}${SEVER_REQUESTS.createDocument}/`,
-        {...document, ...nomenculature}
-      )
+      .post(`http://localhost:${PORT}${SERVER_REQUESTS.documents}/`, {
+        ...document,
+        ...nomenculature,
+      })
       .then(() => {
-        if(!alert('Succied!')){window.location.reload();}
+        if (!alert("Succied!")) {
+          window.location.reload();
+        }
       });
   };
 
@@ -216,7 +232,7 @@ export default function DocumentForm() {
 
           <Grid item xs={6}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={["DateField"]} sx={{ pt: 0 }}>
+              <DemoContainer components={["DatePicker"]} sx={{ pt: 0 }}>
                 <DatePicker
                   name="documentDate"
                   label="Дата документа"
@@ -228,7 +244,7 @@ export default function DocumentForm() {
                       helperText: errors && errors["receiptDate"],
                     },
                   }}
-                  sx={{ width: "100%", overflow: 'hidden' }}
+                  sx={{ width: "100%", overflow: "hidden" }}
                   onChange={(value) =>
                     setDocument({
                       ...document,
@@ -248,7 +264,7 @@ export default function DocumentForm() {
             helperText={errors && errors["nomenculatureCode"]}
             id="nomenculatureCode"
             name="nomenculatureCode"
-            label="Номер нуменкулатуры"
+            label="Код номенкулатуры"
             fullWidth
             variant="standard"
             onChange={(event) =>
@@ -267,7 +283,7 @@ export default function DocumentForm() {
             helperText={errors && errors["nomenculatureName"]}
             id="nomenculatureName"
             name="nomenculatureName"
-            label="Название нуменкулатуры"
+            label="Название номенкулатуры"
             fullWidth
             variant="standard"
             onChange={(event) =>
@@ -336,9 +352,13 @@ export default function DocumentForm() {
           />
         </Grid>
 
-        <Grid item xs={6} alignItems={"flex-end"}>
+        <Grid
+          item
+          xs={6}
+          alignItems={"flex-end"}
+          sx={{ visibility: isDocTypeIncome ? "visible" : "hidden" }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DateField"]}>
+            <DemoContainer components={["DatePicker"]}>
               <DatePicker
                 name="bestBeforeDate"
                 label="Срок годности"
@@ -346,11 +366,12 @@ export default function DocumentForm() {
                 slotProps={{
                   textField: {
                     variant: "standard",
+                    "aria-hidden": true,
                     error: !!errors && !!errors["bestBeforeDate"],
                     helperText: errors && errors["bestBeforeDate"],
                   },
                 }}
-                sx={{ width: "100%", overflow: 'hidden'  }}
+                sx={{ width: "100%", overflow: "hidden" }}
                 onChange={(value) => {
                   setNomenculature({
                     ...nomenculature,
@@ -364,10 +385,10 @@ export default function DocumentForm() {
 
         <Grid item xs={6} alignItems={"flex-end"}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DateField"]}>
+            <DemoContainer components={["DatePicker"]}>
               <DatePicker
                 name="receiptDate"
-                label="Дата прихода"
+                label="Дата чека"
                 render
                 slotProps={{
                   textField: {
@@ -376,7 +397,7 @@ export default function DocumentForm() {
                     helperText: errors && errors["receiptDate"],
                   },
                 }}
-                sx={{ width: "100%", overflow: 'hidden' }}
+                sx={{ width: "100%", overflow: "hidden" }}
                 onChange={(value) => {
                   setNomenculature({
                     ...nomenculature,

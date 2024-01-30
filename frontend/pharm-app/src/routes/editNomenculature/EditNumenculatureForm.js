@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import Button from "@mui/material/Button";
 
 import axios from "axios";
-import { SEVER_REQUESTS, PORT } from "../../helpers/constants";
+import { SERVER_REQUESTS, PORT } from "../../helpers/constants";
 
 export default function EditNomenculatureForm(props) {
   let { nomenculature } = props;
@@ -53,7 +53,7 @@ export default function EditNomenculatureForm(props) {
     // zapros
     axios
       .post(
-        `http://localhost:${PORT}${SEVER_REQUESTS.nomenculatures}/${nomenculature.nomenculatureId}`,
+        `http://localhost:${PORT}${SERVER_REQUESTS.nomenculatures}/${nomenculature.nomenculatureId}`,
         nomenculature
       )
       .then((response) => {
@@ -68,7 +68,7 @@ export default function EditNomenculatureForm(props) {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <Typography component="h4" variant="h8" align="left">
-            {`Код нуменкулатуры: ${nomenculature.nomenculatureCode}`}
+            {`Код номенкулатуры: ${nomenculature.nomenculatureCode}`}
           </Typography>
           <Typography component="h4" variant="h8" align="left">
             {`Название номенкулатуры: ${nomenculature.nomenculatureName}`}

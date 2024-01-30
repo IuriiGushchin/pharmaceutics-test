@@ -29,7 +29,6 @@ export default function NomenculaturesList() {
       <Container
         maxWidth="lg"
         sx={{ my: { xs: 10, md: 10 }, p: { xs: 2, md: 10 } }}>
-        {" "}
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>

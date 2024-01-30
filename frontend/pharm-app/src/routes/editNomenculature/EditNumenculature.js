@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import EditNumenculatureForm from "./EditNumenculatureForm";
 import Copyright from "../../globalElements/Copyrights";
 import axios from 'axios';
-import { SEVER_REQUESTS, PORT } from '../../helpers/constants';
+import { SERVER_REQUESTS, PORT } from '../../helpers/constants';
 
 
 
@@ -17,7 +17,7 @@ export default function EditNomenculature() {
   const nomenculatureId = queryParameters.get("nomenculatureId")
 
   React.useEffect(() => {
-    axios.get(`http://localhost:${PORT}${SEVER_REQUESTS.nomenculatures}/${nomenculatureId}`).then((response) => {
+    axios.get(`http://localhost:${PORT}${SERVER_REQUESTS.nomenculatures}/${nomenculatureId}`).then((response) => {
       setNomenculature(response.data);
     });
   }, [nomenculatureId]);
