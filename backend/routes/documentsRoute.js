@@ -56,9 +56,6 @@ app.post("/", async (req, res) => {
 
 app.post("/report", async (req, res) => {
   try {
-    console.log(req.body);
-    console.log("");
-
     const allConsignmentsBySeries = await consignmentsRepository.getAllBySeries(
       req.body
     );
@@ -69,9 +66,7 @@ app.post("/report", async (req, res) => {
       document[0].nomenculatureId
     );
 
-    console.log(nomenculature);
-
-    // for before
+    //  counts
     let beforeCount = 0;
     let afterCount = 0;
     let income = 0;
@@ -103,10 +98,6 @@ app.post("/report", async (req, res) => {
         }
       })
     );
-    console.log(beforeCount);
-    console.log(afterCount);
-    console.log(income);
-    console.log(outcome);
 
     res
       .status(200)

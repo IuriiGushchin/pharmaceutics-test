@@ -36,7 +36,6 @@ const getAll = async () => {
 };
 
 const getAllByConsignmentIds = async (correctStringOfIds) => {
-    console.log(correctStringOfIds)
 
   const query = `
         SELECT * FROM
@@ -46,7 +45,6 @@ const getAllByConsignmentIds = async (correctStringOfIds) => {
     ;`;
 
   const result = await db.query(query, [correctStringOfIds]);
-  console.log(result)
 
   return result.rows;
 };
@@ -68,8 +66,6 @@ const updateOne = async (
   id,
   { nomenculatureName, nomenculatureCode, consignmentId }
 ) => {
-  console.log(nomenculatureName, nomenculatureCode, consignmentId);
-  console.log("gbahjgd");
   const query = `
         UPDATE
             "public"."nomenculaturesTable"
