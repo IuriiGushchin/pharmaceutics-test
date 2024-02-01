@@ -1,83 +1,101 @@
-
-const db = require("./index.js")
+const db = require("./index.js");
 
 const create = async ({
-    title,
-    status,
+  nomenculatureId,
+  nomenculatureName,
+  nomenculatureCode,
+  consignmentId,
 }) => {
-    const query = `
+  const query = `
         INSERT INTO
-            todos (title, status)
+            "public"."nomenculaturesTable" ("nomenculatureId", "nomenculatureCode", "nomenculatureName", "consignmentId")
         VALUES
-            ($1, $2)
+            ($1, $2, $3, $4)
         RETURNING *
     ;`;
 
-    const result = await db.query(query, [title, status]);
+  const result = await db.query(query, [
+    nomenculatureId,
+    nomenculatureCode,
+    nomenculatureName,
+    consignmentId,
+  ]);
 
-    return result.rows[0];
-}
-
-const findOne = async (id) => {
-    const query = `
-        SELECT * FROM
-            todos
-        WHERE
-            id = $1
-    ;`;
-
-    const result = await db.query(query, [+id]);
-
-    return result.rows[0];
-}
+  return result.rows[0];
+};
 
 const getAll = async () => {
-
-    const query = `
+  const query = `
         SELECT * FROM
             "public"."nomenculaturesTable"
     ;`;
 
-    const result = await db.query(query);
+  const result = await db.query(query);
 
-    return result.rows;
-}
+  return result.rows;
+};
 
-const updateOne = async (id, { title, status }) => {
-    const query = `
+const getAllByConsignmentIds = async (correctStringOfIds) => {
+    console.log(correctStringOfIds)
+
+  const query = `
+        SELECT * FROM
+            "public"."nomenculaturesTable"
+        WHERE
+            "consignmentId" IN $1
+    ;`;
+
+  const result = await db.query(query, [correctStringOfIds]);
+  console.log(result)
+
+  return result.rows;
+};
+
+const findOne = async (id) => {
+  const query = `
+        SELECT * FROM
+            "public"."nomenculaturesTable"
+        WHERE
+        "nomenculatureId" = $1
+    ;`;
+
+  const result = await db.query(query, [id]);
+
+  return result.rows[0];
+};
+
+const updateOne = async (
+  id,
+  { nomenculatureName, nomenculatureCode, consignmentId }
+) => {
+  console.log(nomenculatureName, nomenculatureCode, consignmentId);
+  console.log("gbahjgd");
+  const query = `
         UPDATE
-            todos
+            "public"."nomenculaturesTable"
         SET
-            title = $2,
-            status = $3
+            "nomenculatureName" = $2,
+            "nomenculatureCode" = $3,
+            "consignmentId" = $4
         WHERE
-            id = $1
+        "nomenculatureId" = $1
         RETURNING *
     ;`;
 
-    const result = await db.query(query, [+id, title, status]);
+  const result = await db.query(query, [
+    id,
+    nomenculatureName,
+    nomenculatureCode,
+    consignmentId,
+  ]);
 
-    return result.rows[0];
-}
+  return result.rows[0];
+};
 
-const deleteOne = async (id) => {
-    const query = `
-        DELETE FROM
-            todos
-        WHERE
-            id = $1
-        RETURNING *
-    ;`;
-
-    const result = await db.query(query, [+id]);
-
-    return result.rows[0];
-}
-
- module.exports = {
-    create,
-    findOne,
-    getAll,
-    updateOne,
-    deleteOne,
-}
+module.exports = {
+  create,
+  findOne,
+  getAll,
+  updateOne,
+  getAllByConsignmentIds,
+};

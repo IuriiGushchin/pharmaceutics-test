@@ -1,38 +1,58 @@
-const express = require('express')
-const app = express()
-const todoRepository = require ("./dbRepository/nomenculaturesRepository.js");
+const express = require("express");
+const app = express();
+const documentsRepository = require("./dbRepository/documentsRepository.js");
+const nomenculaturesRepository = require("./dbRepository/nomenculaturesRepository.js");
+const consignmentsRepository = require("./dbRepository/consignmentsRepository.js");
 
-// const router = Router();
+app.post("/", async (req, res) => {
+  try {
+    console.log(req.body);
+    const docResult = await documentsRepository.create(req.body);
+    const nomResult = await nomenculaturesRepository.create(req.body);
+    const consResult = await consignmentsRepository.create(req.body);
 
-app.post('/', async (req, res) => {
-    const result = await todoRepository.findAll();
-    res.status(201).json(result)
-})
+    result = docResult && nomResult && consResult;
 
-app.get('/', async (req, res) => {
-    console.log(process.env.DB_HOST,process.env.DB_PORT,process.env.DB_USER,process.env.DB_PASSWORD,process.env.DB_NAME )
+    res.status(200).json(result);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      error: {
+        code: "internalServerError",
+        message: "server error when try to create documents",
+      },
+    });
+  }
+});
 
-    const result = await todoRepository.getAll();
+app.post("/report", async (req, res) => {
+  try {
+    console.log(req.body);
 
-    res.json(result)
-})
+    const reportValues = await documentsRepository.getAllInDateRange(req.body);
+    const consignmentsBySeries = await consignmentsRepository.getAllBySeries(
+      req.body
+    );
+    const idsOfConsignments = consignmentsBySeries.map((x) => x.consignmentId);
+    
+    const correctStringOfIds =
+      `'${idsOfConsignments.join([(separator = "','")])}'`
+      console.log(correctStringOfIds)
+    const nomenculatures =
+      nomenculaturesRepository.getAllByConsignmentIds(correctStringOfIds);
 
-app.get('/:id', async (req, res) => {
-    const result = await todoRepository.findOne(+req.params.id);
+    // const
 
-    res.json(result)
-})
-
-app.put('/:id', async (req, res) => {
-    const result = await todoRepository.updateOne(+req.params.id, req.body);
-
-    res.json(result)
-})
-
-app.delete('/:id', async (req, res) => {
-    const result = await todoRepository.deleteOne(+req.params.id);
-
-    res.json(result)
-})
+    res.status(200).json(nomenculatures);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      error: {
+        code: "internalServerError",
+        message: "server error when try to create documents",
+      },
+    });
+  }
+});
 
 module.exports = app;
