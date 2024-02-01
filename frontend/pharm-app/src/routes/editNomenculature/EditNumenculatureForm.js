@@ -10,6 +10,8 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import { SERVER_REQUESTS, PORT } from "../../helpers/constants";
 
+
+//TODO: проверить на грамотность 
 export default function EditNomenculatureForm(props) {
   let { nomenculature } = props;
 
@@ -80,9 +82,9 @@ export default function EditNomenculatureForm(props) {
         <Grid item xs={12}>
           <TextField
             required
-            id="nomName"
-            name="nomName"
-            label={`Изменить партию номенкулатуры: `}
+            id="nomCode"
+            name="noCode"
+            label={`Изменить код номенкулатуры: `}
             fullWidth
             autoComplete="family-name"
             variant="standard"

@@ -2,6 +2,7 @@ import * as React from "react";
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 // import CreateNomenculatureForm from "./CreateNomenculatureForm";
 import Copyright from "../../globalElements/Copyrights";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -16,17 +17,20 @@ import axios from "axios";
 export default function Report() {
   const [startDate, setStartDate] = React.useState();
   const [endDate, setEndDate] = React.useState();
+  const [series, setSeries] = React.useState();
+  const [report, setReport] = React.useState(null);
 
   const handleCreate = () => {
     console.log(startDate, endDate);
 
     axios
-      .post(
-        `http://localhost:${PORT}${SERVER_REQUESTS.report}/`,
-        {startDate, endDate}
-      )
+      .post(`http://localhost:${PORT}${SERVER_REQUESTS.report}/`, {
+        series,
+        startDate,
+        endDate,
+      })
       .then((result) => {
-        console.log(result)
+        console.log(result);
       });
   };
 
@@ -43,8 +47,13 @@ export default function Report() {
             container
             spacing={3}
             flexDirection={"row"}
-            // xs={12}
+            sx={{mt:2}}
             justifyContent={"center"}>
+              
+            <Grid item xs={4}>
+              {/* <Typography component="h6"> Серия партии </Typography> */}
+              <TextField label={"Серия партии"} onChange={(event) => {setSeries(event.target.value)}}/>
+            </Grid>
             <Grid item xs={4}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["DatePicker"]}>
@@ -95,8 +104,28 @@ export default function Report() {
             variant="contained"
             onClick={handleCreate}
             sx={{ mt: 3, ml: 1 }}>
-            Next
+            Сформировать
           </Button>
+          <Grid container flexDirection={"column"} spacing={4} sx={{mt: 2}}>
+            <Grid item>
+              <Typography>Наименование товара:</Typography>
+            </Grid>
+            <Grid item>
+              <Typography>Код товара:</Typography>
+            </Grid>
+            <Grid item>
+              <Typography>Начальный остаток:</Typography>
+            </Grid>
+            <Grid item>
+              <Typography>Конечный остаток:</Typography>
+            </Grid>
+            <Grid item>
+              <Typography>Приход:</Typography>
+            </Grid>
+            <Grid item>
+              <Typography>Расход:</Typography>
+            </Grid>
+          </Grid>
           {/* <CreateNomenculatureForm /> */}
         </Paper>
         <Copyright />

@@ -19,11 +19,12 @@ import useLabelState from "../../helpers/useLabelState";
 
 const initialDocument = {
   documentId: "",
-  isIncome: true,
-  isNewProductsOutcoming: true,
+  isOutcome: true,
+  outcomeTypeFIFO: true,
   documentNumber: "",
   documentDate: "",
   nomenculatureId: "",
+  consignmentId: ""
 };
 const initialNomenculature = {
   nomenculatureCode: "",
@@ -41,7 +42,7 @@ export default function DocumentForm() {
   const [document, setDocument] = React.useState(initialDocument);
   const [nomenculature, setNomenculature] =
     React.useState(initialNomenculature);
-  const [isDocTypeIncome, setIsDoctypeIncome] = React.useState(true);
+  const [isDocTypeOutcome, setIsDoctypeOutcome] = React.useState(true);
   const [isNewProductsOutcoming, setIsNewProductsOutcoming] =
     React.useState(true);
 
@@ -53,6 +54,7 @@ export default function DocumentForm() {
       ...document,
       documentId: documentId,
       nomenculatureId: nomenculatureId,
+      consignmentId: consignmentId,
     });
 
     setNomenculature({
@@ -64,13 +66,12 @@ export default function DocumentForm() {
   }, []);
 
   const handleDocTypeChange = (event) => {
-    setDocument({ ...document, isIncome: event.target.value });
-    setNomenculature({ ...nomenculature, isIncome: event.target.value });
-    setIsDoctypeIncome(event.target.value);
+    setDocument({ ...document, isOutcome: event.target.value });
+    setIsDoctypeOutcome(event.target.value);
   };
 
   const handleProductOutcomeType = (event) => {
-    setDocument({ ...document, isNewProductsOutcoming: event.target.value });
+    setDocument({ ...document, outcomeTypeFIFO: event.target.value });
     setIsNewProductsOutcoming(event.target.value);
   };
 
@@ -80,7 +81,6 @@ export default function DocumentForm() {
       isIncome: yup.bool(),
       nomenculatureCode: yup.string().required("* Обязательно"),
       nomenculatureName: yup.string().required("* Обязательно"),
-      consignmentId: yup.string().required("* Обязательно"),
       consignmentNumber: yup
         .number()
         .required()
@@ -96,10 +96,6 @@ export default function DocumentForm() {
         }
         return schema;
       }),
-      // .when("isIncome", {
-      //   is: true,
-      //   then: yup.date().required("* Обязательно").typeError("Некорректная дата")
-      // }),
       receiptDate: yup
         .date()
         .required("* Обязательно")
@@ -157,7 +153,7 @@ export default function DocumentForm() {
       var keys = Object.keys({ ...docErrors, ...nomErrors });
       var key = keys[0];
 
-      if (keys.length === 1 && key === "bestBeforeDate" && !isDocTypeIncome) {
+      if (keys.length === 1 && key === "bestBeforeDate" && isDocTypeOutcome) {
       } else {
         setErrors({ ...docErrors, ...nomErrors });
         return;
@@ -185,15 +181,15 @@ export default function DocumentForm() {
             <InputLabel>Тип документа</InputLabel>
             <Select
               sx={{ textAlign: "left" }}
-              value={isDocTypeIncome}
+              value={isDocTypeOutcome}
               onChange={handleDocTypeChange}
               label="Тип документа">
-              <MenuItem value={true}>Поступление</MenuItem>
-              <MenuItem value={false}>Реализация</MenuItem>
+              <MenuItem value={true}>Реализация</MenuItem>
+              <MenuItem value={false}>Поступление</MenuItem>
             </Select>
           </FormControl>
         </Grid>
-        {!isDocTypeIncome && (
+        {isDocTypeOutcome && (
           <Grid item xs={6} sm={6} mb={4}>
             <FormControl variant="standard" fullWidth>
               <InputLabel>Тип отгрузки</InputLabel>
@@ -236,7 +232,7 @@ export default function DocumentForm() {
                 <DatePicker
                   name="documentDate"
                   label="Дата документа"
-                  render
+                  format="DD/MM/YYYY"
                   slotProps={{
                     textField: {
                       variant: "standard",
@@ -356,13 +352,13 @@ export default function DocumentForm() {
           item
           xs={6}
           alignItems={"flex-end"}
-          sx={{ visibility: isDocTypeIncome ? "visible" : "hidden" }}>
+          sx={{ visibility: isDocTypeOutcome ?  "hidden" : "visible" }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={["DatePicker"]}>
               <DatePicker
                 name="bestBeforeDate"
                 label="Срок годности"
-                render
+                format="DD/MM/YYYY"
                 slotProps={{
                   textField: {
                     variant: "standard",
@@ -389,7 +385,7 @@ export default function DocumentForm() {
               <DatePicker
                 name="receiptDate"
                 label="Дата чека"
-                render
+                format="DD/MM/YYYY"
                 slotProps={{
                   textField: {
                     variant: "standard",
