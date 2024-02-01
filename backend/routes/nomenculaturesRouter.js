@@ -39,16 +39,33 @@ app.post("/create", async (req, res) => {
 
 app.get("/consignment", async (req, res) => {
   try {
-    console.log('im working')
+    console.log("im working");
     const result = await consignmentsRepository.findOne(req.query.id);
-    console.log(result)
+    console.log(result);
     res.send(result);
   } catch (e) {
     console.log(e);
     res.status(500).json({
       error: {
         code: "internalServerError",
-        message: "server error when try to get a nomenculature ",
+        message: "server error when try to get a nomenculatures consignment ",
+      },
+    });
+  }
+});
+
+app.post("/consignment", async (req, res) => {
+  try {
+    console.log("im working");
+    const result = await consignmentsRepository.updateOne(req.query.id);
+    console.log(result);
+    res.send(result);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      error: {
+        code: "internalServerError",
+        message: "server error when try to edit nomenculatures consignment ",
       },
     });
   }
@@ -63,7 +80,7 @@ app.get("/:id", async (req, res) => {
     res.status(500).json({
       error: {
         code: "internalServerError",
-        message: "server error when try to get nomenculatures consignment ",
+        message: "server error when try to get nomenculature ",
       },
     });
   }

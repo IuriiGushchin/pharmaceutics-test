@@ -31,6 +31,32 @@ const create = async ({
   return result.rows[0];
 };
 
+const updateOne = async (
+  id,
+  { nomenculatureName, nomenculatureCode, consignmentId }
+) => {
+  const query = `
+        UPDATE
+            "public"."documentsTable"
+        SET
+            "nomenculatureName" = $2,
+            "nomenculatureCode" = $3,
+            "consignmentId" = $4
+        WHERE
+        "nomenculatureId" = $1
+        RETURNING *
+    ;`;
+
+  const result = await db.query(query, [
+    id,
+    nomenculatureName,
+    nomenculatureCode,
+    consignmentId,
+  ]);
+
+  return result.rows[0];
+};
+
 const getAllBySeries = async ({ series }) => {
   const query = `
             SELECT * FROM
@@ -59,6 +85,7 @@ const findOne = async (id) => {
 
 module.exports = {
   create,
+  updateOne,
   getAllBySeries,
   findOne
 };

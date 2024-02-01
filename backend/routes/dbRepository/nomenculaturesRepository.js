@@ -35,20 +35,6 @@ const getAll = async () => {
   return result.rows;
 };
 
-const getAllByConsignmentIds = async (correctStringOfIds) => {
-
-  const query = `
-        SELECT * FROM
-            "public"."nomenculaturesTable"
-        WHERE
-            "consignmentId" IN $1
-    ;`;
-
-  const result = await db.query(query, [correctStringOfIds]);
-
-  return result.rows;
-};
-
 const findOne = async (id) => {
   const query = `
         SELECT * FROM
@@ -92,6 +78,5 @@ module.exports = {
   create,
   findOne,
   getAll,
-  updateOne,
-  getAllByConsignmentIds,
+  updateOne
 };

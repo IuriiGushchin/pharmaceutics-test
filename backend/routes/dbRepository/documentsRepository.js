@@ -31,20 +31,6 @@ const create = async ({
   return result.rows[0];
 };
 
-const getAllInDateRange = async ({ startDate, endDate }) => {
-  console.log(startDate, endDate);
-
-  const query = `
-        SELECT * FROM
-            "public"."documentsTable"
-        WHERE
-            ("documentDate" BETWEEN $1 AND $2)
-    ;`;
-
-  const result = await db.query(query, [startDate, endDate]);
-
-  return result.rows[0];
-};
 
 const getByConsignmentId = async (id) => {
   const query = `
@@ -61,6 +47,5 @@ const getByConsignmentId = async (id) => {
 
 module.exports = {
   create,
-  getAllInDateRange,
   getByConsignmentId,
 };
