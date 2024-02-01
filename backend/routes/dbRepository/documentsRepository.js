@@ -7,7 +7,7 @@ const create = async ({
   nomenculatureId,
   outcomeTypeFIFO,
   documentDate,
-  documentNumber
+  documentNumber,
 }) => {
   const query = `
         INSERT INTO
@@ -25,7 +25,7 @@ const create = async ({
     nomenculatureId,
     outcomeTypeFIFO,
     documentDate,
-    documentNumber
+    documentNumber,
   ]);
 
   return result.rows[0];
@@ -39,15 +39,28 @@ const getAllInDateRange = async ({ startDate, endDate }) => {
             "public"."documentsTable"
         WHERE
             ("documentDate" BETWEEN $1 AND $2)
-    ;`
+    ;`;
 
-    const result = await db.query(query, [startDate, endDate])
-
+  const result = await db.query(query, [startDate, endDate]);
 
   return result.rows[0];
+};
+
+const getByConsignmentId = async (id) => {
+  const query = `
+        SELECT * FROM
+            "public"."documentsTable"
+        WHERE
+            "consignmentId" = $1 
+    ;`;
+
+  const result = await db.query(query, [id]);
+
+  return result.rows;
 };
 
 module.exports = {
   create,
   getAllInDateRange,
+  getByConsignmentId,
 };

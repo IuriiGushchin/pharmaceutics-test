@@ -43,8 +43,23 @@ const getAllBySeries = async ({ series }) => {
 
   return result.rows;
 };
+const getAllBySeriesInDateRange = async ({ series, startDate, endDate }) => {
+  const query = `
+            SELECT * FROM
+                "public"."consignmentsTable"
+            WHERE
+            "series" = $1 
+            AND 
+            ("receiptDate" BETWEEN $2 AND $3)
+        ;`;
+
+  const result = await db.query(query, [series, startDate, endDate]);
+
+  return result.rows;
+};
 
 module.exports = {
   create,
   getAllBySeries,
+  getAllBySeriesInDateRange
 };
