@@ -7,7 +7,6 @@ const consignmentsRepository = require("./dbRepository/consignmentsRepository.js
 // TODO : add validation
 app.post("/", async (req, res) => {
   try {
-    console.log(req.body);
     if (req.body.isOutcome) {
       const consignmentsBySeries = await consignmentsRepository.getAllBySeries(
         req.body
@@ -18,14 +17,12 @@ app.post("/", async (req, res) => {
           const document = await documentsRepository.getByConsignmentId(
             x.consignmentId
           );
-          console.log(document[0].isOutcome, "******");
           if (document[0].isOutcome === true) {
             totalConsCount -= Number(x.count);
           } else totalConsCount += Number(x.count);
         })
       );
       if (req.body.count > totalConsCount) {
-        console.log(req.body.count);
         return res.status(403).json({
           error: {
             code: "forbidden",
