@@ -24,7 +24,7 @@ const initialDocument = {
   documentNumber: "",
   documentDate: "",
   nomenculatureId: "",
-  consignmentId: ""
+  consignmentId: "",
 };
 const initialNomenculature = {
   nomenculatureCode: "",
@@ -155,12 +155,14 @@ export default function DocumentForm() {
 
       if (keys.length === 1 && key === "bestBeforeDate" && isDocTypeOutcome) {
       } else {
+        console.log({ ...docErrors, ...nomErrors }, "gbadflgdf");
         setErrors({ ...docErrors, ...nomErrors });
         return;
       }
     }
     console.log(nomenculature);
     console.log(document);
+    console.log("document");
     axios
       .post(`http://localhost:${PORT}${SERVER_REQUESTS.documents}/`, {
         ...document,
@@ -170,6 +172,10 @@ export default function DocumentForm() {
         if (!alert("Succied!")) {
           window.location.reload();
         }
+      })
+      .catch((e) => {
+        console.log(e)
+        alert(e.response.data.error.message)
       });
   };
 
@@ -236,8 +242,8 @@ export default function DocumentForm() {
                   slotProps={{
                     textField: {
                       variant: "standard",
-                      error: !!errors && !!errors["receiptDate"],
-                      helperText: errors && errors["receiptDate"],
+                      error: !!errors && !!errors["documentDate"],
+                      helperText: errors && errors["documentDate"],
                     },
                   }}
                   sx={{ width: "100%", overflow: "hidden" }}
@@ -348,37 +354,6 @@ export default function DocumentForm() {
           />
         </Grid>
 
-        <Grid
-          item
-          xs={6}
-          alignItems={"flex-end"}
-          sx={{ visibility: isDocTypeOutcome ?  "hidden" : "visible" }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DatePicker"]}>
-              <DatePicker
-                name="bestBeforeDate"
-                label="Срок годности"
-                format="DD/MM/YYYY"
-                slotProps={{
-                  textField: {
-                    variant: "standard",
-                    "aria-hidden": true,
-                    error: !!errors && !!errors["bestBeforeDate"],
-                    helperText: errors && errors["bestBeforeDate"],
-                  },
-                }}
-                sx={{ width: "100%", overflow: "hidden" }}
-                onChange={(value) => {
-                  setNomenculature({
-                    ...nomenculature,
-                    bestBeforeDate: value,
-                  });
-                }}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-        </Grid>
-
         <Grid item xs={6} alignItems={"flex-end"}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={["DatePicker"]}>
@@ -398,6 +373,37 @@ export default function DocumentForm() {
                   setNomenculature({
                     ...nomenculature,
                     receiptDate: value,
+                  });
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </Grid>
+
+        <Grid
+          item
+          xs={6}
+          alignItems={"flex-end"}
+          sx={{ visibility: isDocTypeOutcome ? "hidden" : "visible" }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker
+                name="bestBeforeDate"
+                label="Срок годности"
+                format="DD/MM/YYYY"
+                slotProps={{
+                  textField: {
+                    variant: "standard",
+                    "aria-hidden": true,
+                    error: !!errors && !!errors["bestBeforeDate"],
+                    helperText: errors && errors["bestBeforeDate"],
+                  },
+                }}
+                sx={{ width: "100%", overflow: "hidden" }}
+                onChange={(value) => {
+                  setNomenculature({
+                    ...nomenculature,
+                    bestBeforeDate: value,
                   });
                 }}
               />

@@ -1,4 +1,6 @@
 import * as React from "react";
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -13,6 +15,8 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { SERVER_REQUESTS, PORT } from "../../helpers/constants";
 import axios from "axios";
+
+dayjs.extend(utc);
 
 export default function Report() {
   const [startDate, setStartDate] = React.useState();
@@ -31,6 +35,7 @@ export default function Report() {
       })
       .then((result) => {
         console.log(result);
+        setReport(result.data)
       });
   };
 
@@ -47,12 +52,17 @@ export default function Report() {
             container
             spacing={3}
             flexDirection={"row"}
-            sx={{mt:2}}
+            sx={{ mt: 2 }}
             justifyContent={"center"}>
-              
             <Grid item xs={4}>
               {/* <Typography component="h6"> Серия партии </Typography> */}
-              <TextField label={"Серия партии"} onChange={(event) => {setSeries(event.target.value)}}/>
+              <TextField
+                label={"Серия партии"}
+                onChange={(event) => {
+                  setSeries(event.target.value);
+                }}
+                sx={{width: '100%'}}
+              />
             </Grid>
             <Grid item xs={4}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -60,6 +70,8 @@ export default function Report() {
                   <DatePicker
                     name="startDate"
                     label="Начальная дата"
+                    format="DD/MM/YYYY"
+                    timezone="UTC"
                     render
                     slotProps={{
                       textField: {
@@ -83,6 +95,7 @@ export default function Report() {
                   <DatePicker
                     name="endDate"
                     label="Конечная дата"
+                    format="DD/MM/YYYY"
                     render
                     slotProps={{
                       textField: {
@@ -106,27 +119,32 @@ export default function Report() {
             sx={{ mt: 3, ml: 1 }}>
             Сформировать
           </Button>
-          <Grid container flexDirection={"column"} spacing={4} sx={{mt: 2}}>
+          <Grid container flexDirection={"column"} spacing={4} sx={{ mt: 2 }}>
             <Grid item>
               <Typography>Наименование товара:</Typography>
+              <Typography visibility={report}>{report?.name}</Typography>
             </Grid>
             <Grid item>
               <Typography>Код товара:</Typography>
+              <Typography visibility={report}>{report?.code}</Typography>
             </Grid>
             <Grid item>
               <Typography>Начальный остаток:</Typography>
+              <Typography visibility={report}>{report?.before}</Typography>
             </Grid>
             <Grid item>
               <Typography>Конечный остаток:</Typography>
+              <Typography visibility={report}>{report?.after}</Typography>
             </Grid>
             <Grid item>
               <Typography>Приход:</Typography>
+              <Typography visibility={report}>{report?.income}</Typography>
             </Grid>
             <Grid item>
               <Typography>Расход:</Typography>
+              <Typography visibility={report}>{report?.outcome}</Typography>
             </Grid>
           </Grid>
-          {/* <CreateNomenculatureForm /> */}
         </Paper>
         <Copyright />
       </Container>

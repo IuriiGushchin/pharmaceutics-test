@@ -243,6 +243,7 @@ export default function CreateNomenculatureForm() {
                 <DemoContainer components={["DateField"]} sx={{ ml: "5%" }}>
                   <DatePicker
                     label="Срок годности"
+                    format="DD/MM/YYYY"
                     render
                     slotProps={{
                       textField: {
@@ -269,6 +270,7 @@ export default function CreateNomenculatureForm() {
                 <DemoContainer components={["DateField"]}>
                   <DatePicker
                     label="Дата прихода"
+                    format="DD/MM/YYYY"
                     slotProps={{
                       textField: {
                         variant: "standard",
