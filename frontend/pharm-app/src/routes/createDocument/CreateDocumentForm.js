@@ -30,7 +30,7 @@ const initialNomenculature = {
   nomenculatureCode: "",
   nomenculatureName: "",
   consignmentId: "",
-  consignmentNumber: 0,
+  consignmentCode: 0,
   series: "",
   manufacturer: "",
   bestBeforeDate: "",
@@ -81,7 +81,7 @@ export default function DocumentForm() {
       isIncome: yup.bool(),
       nomenculatureCode: yup.string().required("* Обязательно"),
       nomenculatureName: yup.string().required("* Обязательно"),
-      consignmentNumber: yup
+      consignmentCode: yup
         .number()
         .required()
         .positive("Должно быть положительным")

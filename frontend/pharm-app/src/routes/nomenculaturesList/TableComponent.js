@@ -99,7 +99,7 @@ function EnhancedTableHead(props) {
 }
 
 function EnhancedTableToolbar(props) {
-  const { selectedItemName, selected } = props;
+  const { selectedItemName, selected, consId } = props;
 
   return (
     <Toolbar
@@ -134,7 +134,7 @@ function EnhancedTableToolbar(props) {
 
       {selectedItemName ? (
         <Tooltip title="Edit">
-          <IconButton href={`${ROUTES_LIST.editNomenculature}?nomenculatureId=${selected}`}>
+          <IconButton href={`${ROUTES_LIST.editNomenculature}?nomenculatureId=${selected}&consignmentId=${consId}`}>
             <ForwardIcon />
           </IconButton>
         </Tooltip>
@@ -149,6 +149,7 @@ export default function NomencTable(data) {
   const [orderBy, setOrderBy] = React.useState("nomenculatureId");
   const [selected, setSelected] = React.useState(0);
   const [selectedName, setSelectedName] = React.useState(null)
+  const [selectedConsId, setSelectedConsId] = React.useState(null)
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -159,7 +160,7 @@ export default function NomencTable(data) {
     setOrderBy(property);
   };
 
-  const handleClick = (event, id, name) => {
+  const handleClick = (event, id, name, consId) => {
     if (selected === id) {
       setSelected(null)
     } else {
@@ -170,6 +171,12 @@ export default function NomencTable(data) {
     } else {
       setSelectedName(name)
     }
+    if (selectedConsId === consId) {
+      setSelectedConsId(null)
+    } else {
+      setSelectedConsId(consId)
+    }
+
   };
 
   const handleChangePage = (event, newPage) => {
@@ -206,6 +213,7 @@ export default function NomencTable(data) {
         <EnhancedTableToolbar
           selectedItemName={selectedName}
           selected={selected} 
+          consId={selectedConsId}
         />
         <TableContainer>
           <Table
@@ -229,7 +237,7 @@ export default function NomencTable(data) {
                     <TableRow
                       hover
                       onClick={(event) =>
-                        handleClick(event, row.nomenculatureId, row.nomenculatureName)
+                        handleClick(event, row.nomenculatureId, row.nomenculatureName, row.consignmentId)
                       }
                       role="checkbox"
                       aria-checked={isItemSelected}

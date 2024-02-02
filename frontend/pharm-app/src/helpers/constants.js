@@ -13,6 +13,7 @@ export const ROUTES_LIST = {
 //todo : edit to correct names
   export const SERVER_REQUESTS = {
     nomenculatures: "/nomenculatures",
+    consignment: "/nomenculatures/consignment",
     createNomenculature: "/nomenculatures/create",
     documents: "/documents",
     report: "/documents/report"

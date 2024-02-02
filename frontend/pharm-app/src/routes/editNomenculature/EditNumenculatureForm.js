@@ -2,67 +2,56 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { v4 as uuidv4 } from "uuid";
 import Button from "@mui/material/Button";
 
 import axios from "axios";
 import { SERVER_REQUESTS, PORT } from "../../helpers/constants";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-
-//TODO: проверить на грамотность 
 export default function EditNomenculatureForm(props) {
-  let { nomenculature } = props;
+  let { initNomenculature, initConsignment } = props;
 
-  const [consCount, setConsCount] = React.useState(0);
-  const [consIds, setConsIds] = React.useState([]);
-  const [nomenculatureName, setNomenculatureName] = React.useState("");
-  const [nomenculatureCode, setNomenculatureCode] = React.useState("");
-  const [consignmentId, setConsignmentId] = React.useState("");
+  const [nomenculature, setNomenculature] = React.useState(null);
+  const [consignment, setConsignment] = React.useState(null);
+  const [errors, setErrors] = React.useState(null);
 
-  console.log(nomenculature);
-
-  const handleNext = () => {
-    const tempIds = consIds;
-    tempIds.push(uuidv4());
-    setConsIds(tempIds);
-    setConsCount(consCount + 1);
-  };
-
-  const handleDelete = (id) => {
-    const tempIds = consIds.filter(function (item) {
-      return item !== id;
-    });
-    setConsIds(tempIds);
-    setConsCount(consCount - 1);
-  };
+  React.useEffect(() => {
+    setNomenculature(initNomenculature)
+    setConsignment(initConsignment)
+  }, [initNomenculature, initConsignment])
 
   const handleEdit = () => {
-    if (nomenculatureName !== "") {
-      console.log(nomenculatureName);
-      nomenculature.nomenculatureName = nomenculatureName;
+    // check for emptiness
+    for (var key in nomenculature) {
+      if (nomenculature[key] === "") {
+        nomenculature[key] = initNomenculature[key]
+      }
     }
-    if (nomenculatureCode !== "") {
-      console.log(nomenculatureCode);
-      nomenculature.nomenculatureCode = nomenculatureCode;
+    for (var key in consignment) {
+      if (consignment[key] === "") {
+        consignment[key] = initConsignment[key]
+      }
     }
-    if (consignmentId !== "") {
-      console.log(consignmentId);
-      nomenculature.consignmentId = consignmentId;
-    }
-
-    // zapros
     axios
-      .post(
-        `http://localhost:${PORT}${SERVER_REQUESTS.nomenculatures}/${nomenculature.nomenculatureId}`,
-        nomenculature
-      )
-      .then((response) => {
-        if(!alert('Succied!')){window.location.reload();}
+      .all([
+        axios.post(`http://localhost:${PORT}${SERVER_REQUESTS.nomenculatures}/${nomenculature.nomenculatureId}`,
+              nomenculature
+            ),
+        axios.post(`http://localhost:${PORT}${SERVER_REQUESTS.consignment}/${consignment.consignmentId}`, {
+          consignment
+        }),
+      ]).then(() => {
+        if (!alert("Succied!")) {
+          window.location.reload();
+        }
+      })
+      .catch((e) => {
+        console.log(e)
+        alert(e.response.data.error.message)
       });
-
-    console.log(nomenculature);
   };
 
   return (
@@ -70,13 +59,34 @@ export default function EditNomenculatureForm(props) {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <Typography component="h4" variant="h8" align="left">
-            {`Код номенкулатуры: ${nomenculature.nomenculatureCode}`}
+            {`Код номенкулатуры: ${initNomenculature?.nomenculatureCode}`}
           </Typography>
           <Typography component="h4" variant="h8" align="left">
-            {`Название номенкулатуры: ${nomenculature.nomenculatureName}`}
+            {`Название номенкулатуры: ${initNomenculature?.nomenculatureName}`}
           </Typography>
           <Typography component="h4" variant="h8" align="left">
-            {`Номер партии: ${nomenculature.consignmentId}`}
+            {`Код партии: ${initConsignment?.consignmentCode}`}
+          </Typography>
+          <Typography component="h4" variant="h8" align="left">
+            {`Производитель: ${initConsignment?.manufacturer}`}
+          </Typography>
+          <Typography component="h4" variant="h8" align="left">
+            {`Серия: ${initConsignment?.series}`}
+          </Typography>
+          <Typography component="h4" variant="h8" align="left">
+            {`Дата прихода: ${initConsignment?.receiptDate.substring(
+              0,
+              initConsignment?.receiptDate.length - 14
+            )}`}
+          </Typography>
+          <Typography component="h4" variant="h8" align="left">
+            {`Срок годности: ${initConsignment?.bestBeforeDate.substring(
+              0,
+              initConsignment?.bestBeforeDate.length - 14
+            )}`}
+          </Typography>
+          <Typography component="h4" variant="h8" align="left">
+            {`Количество: ${initConsignment?.count}`}
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -88,7 +98,12 @@ export default function EditNomenculatureForm(props) {
             fullWidth
             autoComplete="family-name"
             variant="standard"
-            onChange={(event) => setNomenculatureCode(event.target.value)}
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                nomenculatureCode: event.target.value,
+              })
+            }
           />
         </Grid>
         <Grid item xs={12}>
@@ -100,47 +115,160 @@ export default function EditNomenculatureForm(props) {
             fullWidth
             autoComplete="family-name"
             variant="standard"
-            onChange={(event) => setNomenculatureName(event.target.value)}
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                nomenculatureName: event.target.value,
+              })
+            }
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Typography component="h4" variant="h8" align="center">
+            {`Партия:`}
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            error={errors && errors["consignmentNumber"]}
+            helperText={errors && errors["consignmentNumber"]}
+            required
+            id="consId"
+            name="consId"
+            label="Номер партии"
+            fullWidth
+            autoComplete="family-name"
+            variant="standard"
+            sx={{ width: "95%" }}
+            onChange={(event) =>
+              setConsignment({
+                ...consignment,
+                consignmentCode: event.target.value,
+              })
+            }
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
+            error={errors && errors["series"]}
+            helperText={errors && errors["series"]}
             required
-            id="consId"
-            name="consId"
-            label={`Изменить номер партии: `}
+            id="series"
+            name="series"
+            label="Серия"
             fullWidth
             autoComplete="family-name"
             variant="standard"
-            onChange={(event) => setConsignmentId(event.target.value)}
+            sx={{ width: "95%" }}
+            onChange={(event) =>
+              setConsignment({
+                ...consignment,
+                series: event.target.value,
+              })
+            }
           />
         </Grid>
-        {consCount > 0 &&
-          consIds.map((consId) => (
-            <Grid key={consId} container item spacing={3}>
-              <Grid item xs={10}>
-                <TextField
-                  required
-                  id={consId}
-                  name={consId}
-                  label="Добавить партию"
-                  fullWidth
-                  autoComplete="family-name"
-                  variant="standard"
-                />
-              </Grid>
-              <Grid item>
-                <RemoveIcon onClick={(e) => handleDelete(consId)} xs={2} />
-              </Grid>
-            </Grid>
-          ))}
-        <Grid item>
-          <AddIcon onClick={handleNext} />
+        <Grid item xs={12}>
+          <TextField
+            error={errors && errors["manufacturer"]}
+            helperText={errors && errors["manufacturer"]}
+            required
+            id="manufacturer"
+            name="manufacturer"
+            label="Производитель"
+            fullWidth
+            autoComplete="family-name"
+            variant="standard"
+            sx={{ width: "95%" }}
+            onChange={(event) =>
+              setConsignment({
+                ...consignment,
+                manufacturer: event.target.value,
+              })
+            }
+          />
         </Grid>
+        <Grid item container xs={12}>
+          <Grid item xs={6}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateField"]} sx={{ ml: "5%" }}>
+                <DatePicker
+                  label="Срок годности"
+                  format="DD/MM/YYYY"
+                  render
+                  slotProps={{
+                    textField: {
+                      variant: "standard",
+                      error: !!errors && !!errors["bestBeforeDate"],
+                      helperText: errors && errors["bestBeforeDate"],
+                    },
 
-        <Button variant="contained" onClick={handleEdit} sx={{ mt: 3, ml: 1 }}>
-          Edit
-        </Button>
+                    // helperText={errors && errors["manufacturer"]}
+                  }}
+                  sx={{ width: "95%", overflow: "hidden" }}
+                  onChange={(value) => {
+                    setConsignment({
+                      ...consignment,
+                      bestBeforeDate: value,
+                    });
+                  }}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+          </Grid>
+          <Grid item xs={6}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateField"]}>
+                <DatePicker
+                  label="Дата прихода"
+                  format="DD/MM/YYYY"
+                  slotProps={{
+                    textField: {
+                      variant: "standard",
+                      error: !!errors && !!errors["receiptDate"],
+                      helperText: errors && errors["receiptDate"],
+                    },
+                  }}
+                  sx={{ width: "95%", overflow: "hidden" }}
+                  onChange={(value) => {
+                    console.log(value);
+                    setConsignment({
+                      ...consignment,
+                      receiptDate: value,
+                    });
+                  }}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+          </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            error={errors && errors["count"]}
+            helperText={errors && errors["count"]}
+            required
+            id="count"
+            name="count"
+            label="Остаток"
+            sx={{ mb: 3, width: "95%" }}
+            fullWidth
+            autoComplete="family-name"
+            variant="standard"
+            onChange={(event) =>
+              setConsignment({
+                ...consignment,
+                count: Number(event.target.value),
+              })
+            }
+          />
+        </Grid>
+        <Grid item alignItems={"center"} xs={12} >
+          <Button
+            variant="contained"
+            onClick={handleEdit}>
+            Edit
+          </Button>
+        </Grid>
       </Grid>
     </React.Fragment>
   );
