@@ -60,7 +60,7 @@ app.post("/report", async (req, res) => {
       allConsignmentsBySeries[0].consignmentId
     );
     const nomenculature = await nomenculaturesRepository.findOne(
-      document[0].nomenculatureId
+      document.nomenculatureId
     );
 
     //  counts
@@ -71,16 +71,18 @@ app.post("/report", async (req, res) => {
 
     await Promise.all(
       allConsignmentsBySeries.map(async (x) => {
-        const document = await documentsRepository.getByConsignmentId(
+        let document = await documentsRepository.getByConsignmentId(
           x.consignmentId
         );
+        console.log(document)
+        console.log(document.isOutcome)
         if (x.receiptDate.getTime() <= Date.parse(req.body.startDate)) {
-          if (document[0].isOutcome === true) {
+          if (document.isOutcome === true) {
             beforeCount -= Number(x.count);
           } else beforeCount += Number(x.count);
         }
         if (x.receiptDate.getTime() <= Date.parse(req.body.endDate)) {
-          if (document[0].isOutcome === true) {
+          if (document.isOutcome === true) {
             afterCount -= Number(x.count);
           } else afterCount += Number(x.count);
         }
@@ -89,7 +91,7 @@ app.post("/report", async (req, res) => {
           x.receiptDate.getTime() <=
           Date.parse(req.body.endDate)
         ) {
-          if (document[0].isOutcome === true) {
+          if (document.isOutcome === true) {
             outcome += Number(x.count);
           } else income += Number(x.count);
         }

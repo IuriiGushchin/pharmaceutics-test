@@ -42,7 +42,7 @@ const getByConsignmentId = async (id) => {
 
   const result = await db.query(query, [id]);
 
-  return result.rows;
+  return result.rows[0];
 };
 
 module.exports = {

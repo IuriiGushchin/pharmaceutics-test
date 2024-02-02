@@ -72,25 +72,6 @@ export default function CreateNomenculatureForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Для возможного варианта создания нескольких партий одновременно
-  // const [consCount, setConsCount] = React.useState(0);
-  // const [consIds, setConsIds] = React.useState([]);
-
-  // const handleNext = () => {
-  //   const tempIds = consIds;
-  //   tempIds.push(uuidv4());
-  //   setConsIds(tempIds);
-  //   setConsCount(consCount + 1);
-  // };
-
-  // const handleDelete = (id) => {
-  //   const tempIds = consIds.filter(function (item) {
-  //     return item !== id;
-  //   });
-  //   setConsIds(tempIds);
-  //   setConsCount(consCount - 1);
-  // };
-
   const handleCreate = async () => {
     try {
       await schema.validateSync(nomenculature, { abortEarly: false });
@@ -164,297 +145,149 @@ export default function CreateNomenculatureForm() {
             }
           />
         </Grid>
-        <Grid
-          item
-          container
-          xs={12}
-          sx={{
-            backgroundColor: "#cffcda",
-            border: 1,
-            borderRadius: 3,
-            ml: 2,
-            justifyContent: "center",
-            mt: 2,
-          }}>
-          <Typography>Партия</Typography>
-          <Grid item xs={12} sx={{ mt: -3 }}>
-            <TextField
-              error={errors && errors["consignmentNumber"]}
-              helperText={errors && errors["consignmentNumber"]}
-              required
-              id="consId"
-              name="consId"
-              label="Номер партии"
-              fullWidth
-              autoComplete="family-name"
-              variant="standard"
-              sx={{ width: "95%" }}
-              onChange={(event) =>
-                setNomenculature({
-                  ...nomenculature,
-                  consignmentNumber: event.target.value,
-                })
-              }
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              error={errors && errors["series"]}
-              helperText={errors && errors["series"]}
-              required
-              id="series"
-              name="series"
-              label="Серия"
-              fullWidth
-              autoComplete="family-name"
-              variant="standard"
-              sx={{ width: "95%" }}
-              onChange={(event) =>
-                setNomenculature({
-                  ...nomenculature,
-                  series: event.target.value,
-                })
-              }
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              error={errors && errors["manufacturer"]}
-              helperText={errors && errors["manufacturer"]}
-              required
-              id="manufacturer"
-              name="manufacturer"
-              label="Производитель"
-              fullWidth
-              autoComplete="family-name"
-              variant="standard"
-              sx={{ width: "95%" }}
-              onChange={(event) =>
-                setNomenculature({
-                  ...nomenculature,
-                  manufacturer: event.target.value,
-                })
-              }
-            />
-          </Grid>
-          <Grid item container xs={12}>
-            <Grid item xs={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={["DateField"]} sx={{ ml: "5%" }}>
-                  <DatePicker
-                    label="Срок годности"
-                    format="DD/MM/YYYY"
-                    render
-                    slotProps={{
-                      textField: {
-                        variant: "standard",
-                        error: !!errors && !!errors["bestBeforeDate"],
-                        helperText: errors && errors["bestBeforeDate"],
-                      },
+        <Grid item xs={12}>
+          <Typography component="h4" variant="h8">
+            Партия
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sx={{ mt: -3 }}>
+          <TextField
+            error={errors && errors["consignmentNumber"]}
+            helperText={errors && errors["consignmentNumber"]}
+            required
+            id="consId"
+            name="consId"
+            label="Номер партии"
+            fullWidth
+            autoComplete="family-name"
+            variant="standard"
+            sx={{ width: "95%" }}
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                consignmentNumber: event.target.value,
+              })
+            }
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            error={errors && errors["series"]}
+            helperText={errors && errors["series"]}
+            required
+            id="series"
+            name="series"
+            label="Серия"
+            fullWidth
+            autoComplete="family-name"
+            variant="standard"
+            sx={{ width: "95%" }}
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                series: event.target.value,
+              })
+            }
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            error={errors && errors["manufacturer"]}
+            helperText={errors && errors["manufacturer"]}
+            required
+            id="manufacturer"
+            name="manufacturer"
+            label="Производитель"
+            fullWidth
+            autoComplete="family-name"
+            variant="standard"
+            sx={{ width: "95%" }}
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                manufacturer: event.target.value,
+              })
+            }
+          />
+        </Grid>
+        <Grid item container xs={12}>
+          <Grid item xs={6}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateField"]} sx={{ ml: "5%" }}>
+                <DatePicker
+                  label="Срок годности"
+                  format="DD/MM/YYYY"
+                  render
+                  slotProps={{
+                    textField: {
+                      variant: "standard",
+                      error: !!errors && !!errors["bestBeforeDate"],
+                      helperText: errors && errors["bestBeforeDate"],
+                    },
 
-                      // helperText={errors && errors["manufacturer"]}
-                    }}
-                    sx={{ width: "95%", overflow: 'hidden'  }}
-                    onChange={(value) => {
-                      setNomenculature({
-                        ...nomenculature,
-                        bestBeforeDate: value,
-                      });
-                    }}
-                  />
-                </DemoContainer>
-              </LocalizationProvider>
-            </Grid>
-            <Grid item xs={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={["DateField"]}>
-                  <DatePicker
-                    label="Дата прихода"
-                    format="DD/MM/YYYY"
-                    slotProps={{
-                      textField: {
-                        variant: "standard",
-                        error: !!errors && !!errors["receiptDate"],
-                        helperText: errors && errors["receiptDate"],
-                      },
-                    }}
-                    sx={{ width: "95%", overflow: 'hidden'  }}
-                    onChange={(value) => {
-                      console.log(value);
-                      setNomenculature({
-                        ...nomenculature,
-                        receiptDate: value,
-                      });
-                    }}
-                  />
-                </DemoContainer>
-              </LocalizationProvider>
-            </Grid>
+                    // helperText={errors && errors["manufacturer"]}
+                  }}
+                  sx={{ width: "95%", overflow: "hidden" }}
+                  onChange={(value) => {
+                    setNomenculature({
+                      ...nomenculature,
+                      bestBeforeDate: value,
+                    });
+                  }}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              error={errors && errors["count"]}
-              helperText={errors && errors["count"]}
-              required
-              id="count"
-              name="count"
-              label="Остаток"
-              sx={{ mb: 3, width: "95%" }}
-              fullWidth
-              autoComplete="family-name"
-              variant="standard"
-              onChange={(event) =>
-                setNomenculature({
-                  ...nomenculature,
-                  count: Number(event.target.value),
-                })
-              }
-            />
+          <Grid item xs={6}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateField"]}>
+                <DatePicker
+                  label="Дата прихода"
+                  format="DD/MM/YYYY"
+                  slotProps={{
+                    textField: {
+                      variant: "standard",
+                      error: !!errors && !!errors["receiptDate"],
+                      helperText: errors && errors["receiptDate"],
+                    },
+                  }}
+                  sx={{ width: "95%", overflow: "hidden" }}
+                  onChange={(value) => {
+                    console.log(value);
+                    setNomenculature({
+                      ...nomenculature,
+                      receiptDate: value,
+                    });
+                  }}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
           </Grid>
         </Grid>
-        {/* {consCount > 0 &&
-          consIds.map((consId) => (
-            <Grid key={consId} container item spacing={3}>
-              <Grid
-                item
-                container
-                xs={12}
-                sx={{
-                  backgroundColor: "#cffcda",
-                  border: 1,
-                  borderRadius: 3,
-                  ml: 2,
-                  mt: 2,
-                  justifyContent: "center",
-                }}>
-                <Typography>Партия</Typography>
-                <Grid item xs={12} sx={{ mt: -4 }}>
-                  <TextField
-                    required
-                    id="consId"
-                    name="consId"
-                    label="Номер партии"
-                    fullWidth
-                    autoComplete="family-name"
-                    variant="standard"
-                    sx={{ mt: 2 }}
-                    onChange={(event) =>
-                      setConsignment({
-                        ...consignment,
-                        consignmentNumber: event.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="series"
-                    name="series"
-                    label="Серия"
-                    fullWidth
-                    autoComplete="family-name"
-                    variant="standard"
-                    onChange={(event) =>
-                      setConsignment({
-                        ...consignment,
-                        series: event.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="manufacturer"
-                    name="manufacturer"
-                    label="Производитель"
-                    fullWidth
-                    autoComplete="family-name"
-                    variant="standard"
-                    onChange={(event) =>
-                      setConsignment({
-                        ...consignment,
-                        manufacturer: event.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="bestBeforeDate"
-                    name="bestBeforeDate"
-                    label="Срок годности"
-                    fullWidth
-                    autoComplete="family-name"
-                    variant="standard"
-                    onChange={(event) =>
-                      setConsignment({
-                        ...consignment,
-                        bestBeforeDate: event.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="receiptDate"
-                    name="receiptDate"
-                    label="Дата прихода"
-                    fullWidth
-                    autoComplete="family-name"
-                    variant="standard"
-                    onChange={(event) =>
-                      setConsignment({
-                        ...consignment,
-                        receiptDate: event.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="count"
-                    name="count"
-                    label="Остаток"
-                    fullWidth
-                    autoComplete="family-name"
-                    variant="standard"
-                    sx={{ mb: 3 }}
-                    onChange={(event) =>
-                      setConsignment({
-                        ...consignment,
-                        count: event.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-              </Grid>
-              <Grid item>
-                <Button
-                  startIcon={<RemoveIcon />}
-                  onClick={(e) => handleDelete(consId)}
-                  xs={2}>
-                  {`Удалить дополнительную партию `}
-                </Button>
-              </Grid>
-            </Grid>
-          ))} */}
-        {/* <Grid item>
-          <Button startIcon={<AddIcon />} onClick={handleNext}>
-            Добавить партию
-          </Button>
-        </Grid> */}
-        <Button
-          variant="contained"
-          onClick={handleCreate}
-          sx={{ mt: 3, ml: 1 }}>
-          Создать
-        </Button>
+        <Grid item xs={12}>
+          <TextField
+            error={errors && errors["count"]}
+            helperText={errors && errors["count"]}
+            required
+            id="count"
+            name="count"
+            label="Остаток"
+            sx={{ mb: 3, width: "95%" }}
+            fullWidth
+            autoComplete="family-name"
+            variant="standard"
+            onChange={(event) =>
+              setNomenculature({
+                ...nomenculature,
+                count: Number(event.target.value),
+              })
+            }
+          />
+        </Grid>
       </Grid>
+      <Button variant="contained" onClick={handleCreate} sx={{ mt: 3, ml: 1 }}>
+        Создать
+      </Button>
     </React.Fragment>
   );
 }
