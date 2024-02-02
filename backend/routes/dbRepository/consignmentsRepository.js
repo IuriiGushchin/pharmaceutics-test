@@ -2,7 +2,7 @@ const db = require("./index.js");
 
 const create = async ({
   consignmentId,
-  consignmentNumber,
+  consignmentCode,
   series,
   manufacturer,
   bestBeforeDate,
@@ -20,7 +20,7 @@ const create = async ({
 
   const result = await db.query(query, [
     consignmentId,
-    consignmentNumber,
+    consignmentCode,
     series,
     manufacturer,
     bestBeforeDate ? bestBeforeDate : null,
@@ -33,25 +33,31 @@ const create = async ({
 
 const updateOne = async (
   id,
-  { nomenculatureName, nomenculatureCode, consignmentId }
+  { consignmentCode, series, manufacturer, bestBeforeDate, receiptDate, count }
 ) => {
   const query = `
         UPDATE
-            "public"."documentsTable"
-        SET
-            "nomenculatureName" = $2,
-            "nomenculatureCode" = $3,
-            "consignmentId" = $4
+            "public"."consignmentsTable"
+          SET
+            "consignmentCode" = $2,
+            "series" = $3,
+            "manufacturer" = $4,
+            "bestBeforeDate" = $5,
+            "receiptDate" = $6,
+            "count" = $7 
         WHERE
-        "nomenculatureId" = $1
+        "consignmentId" = $1
         RETURNING *
     ;`;
 
   const result = await db.query(query, [
     id,
-    nomenculatureName,
-    nomenculatureCode,
-    consignmentId,
+    consignmentCode,
+    series,
+    manufacturer,
+    bestBeforeDate,
+    receiptDate,
+    count,
   ]);
 
   return result.rows[0];
@@ -87,5 +93,5 @@ module.exports = {
   create,
   updateOne,
   getAllBySeries,
-  findOne
+  findOne,
 };

@@ -39,9 +39,7 @@ app.post("/create", async (req, res) => {
 
 app.get("/consignment", async (req, res) => {
   try {
-    console.log("im working");
     const result = await consignmentsRepository.findOne(req.query.id);
-    console.log(result);
     res.send(result);
   } catch (e) {
     console.log(e);
@@ -54,10 +52,11 @@ app.get("/consignment", async (req, res) => {
   }
 });
 
-app.post("/consignment", async (req, res) => {
+app.post("/consignment/:id", async (req, res) => {
   try {
-    console.log("im working");
-    const result = await consignmentsRepository.updateOne(req.query.id);
+    console.log(req.params.id)
+    console.log(req.body)
+    const result = await consignmentsRepository.updateOne(req.params.id, req.body.consignment);
     console.log(result);
     res.send(result);
   } catch (e) {
